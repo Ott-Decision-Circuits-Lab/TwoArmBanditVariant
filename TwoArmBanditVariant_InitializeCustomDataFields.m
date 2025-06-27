@@ -453,6 +453,26 @@ end
 TrialData.AvailableReward(:, iTrial) = TrialData.Baited(:,iTrial); % Before trial, the two variables is the same. Only changed after the trial
 
 TrialData.RewardMagnitude(:, iTrial) = [TaskParameters.GUI.RewardAmount, TaskParameters.GUI.RewardAmount]'; % first index is for left or right poke
+if TaskParameters.GUI.OUReward % hardcode: tau = 20 trials, variance = RewMag / tau
+    LastSupposedRewardMagnitude = max(TrialData.RewardMagnitude(:, iTrial-1));
+    
+    if iTrial == 0
+        % do nothing
+    elseif isnan(TrialData.ChoiceLeft(iTrial-1))
+        TrialData.RewardMagnitude(:, iTrial) = LastSupposedRewardMagnitude; % to avoid SingleSidePoke
+    else
+        TrialData.RewardMagnitude(:, iTrial) =...
+            LastSupposedRewardMagnitude...
+            + 1 / 20 * (TaskParameters.GUI.RewardAmount - LastSupposedRewardMagnitude)...
+            + (TaskParameters.GUI.RewardAmount / 20) * randn();
+    end
+
+
+    if TrialData.RewardMagnitude(:, iTrial) < 0
+        TrialData.RewardMagnitude(:, iTrial) = 0;
+    end
+end
+
 if TrialData.LightLeft(iTrial) == 1 % adjustment by SingleSidePoke, i.e. 1-arm bandit
     TrialData.RewardMagnitude(2, iTrial) = 0;
 elseif TrialData.LightLeft(iTrial) == 0

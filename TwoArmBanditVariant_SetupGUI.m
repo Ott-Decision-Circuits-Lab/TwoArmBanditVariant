@@ -145,6 +145,8 @@ if isempty(fieldnames(TaskParameters))
                                       
     %% Reward and RewardProb
     TaskParameters.GUI.RewardAmount = 30; % (ul), baseline value for reward (adjusted by ExpressedAsExpectedValue)
+    TaskParameters.GUI.OUReward = false; % new in 20250617
+    TaskParameters.GUIMeta.OUReward.Style = 'checkbox';
     TaskParameters.GUI.ExpressedAsExpectedValue = false; %
     TaskParameters.GUIMeta.ExpressedAsExpectedValue.Style = 'checkbox'; % if true, reward probability = 1 while reward amount discounted by the set probability
     
@@ -177,7 +179,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.RewardProbActualRight = TaskParameters.GUI.RewardProbRight; % Reward Probability of Right Poke, for all RiskType
     TaskParameters.GUIMeta.RewardProbActualRight.Style = 'text';
   
-    TaskParameters.GUIPanels.Reward = {'ToneRiskTable','RewardAmount','ExpressedAsExpectedValue','RiskType',...
+    TaskParameters.GUIPanels.Reward = {'ToneRiskTable','RewardAmount', 'OUReward', 'ExpressedAsExpectedValue','RiskType',...
                                        'RewardProbLeft','RewardProbRight','BlockLenMin',...
                                        'BlockLenMax','BlockLen','NextBlockTrialNumber',...
                                        'RewardProbMax','RewardProbMin',...

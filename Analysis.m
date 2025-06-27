@@ -904,7 +904,7 @@ switch SessionData.SettingsFile.GUIMeta.RiskType.String{SessionData.SettingsFile
                                         'HorizontalAlignment', 'right');
         
         %% Dedicated Analysis script and figure saving for Matching
-        AnalysisFigure = TwoArmBanditVariant_Cued();
+        AnalysisFigure = TwoArmBanditVariant_Cued(DataFile);
         
     case 'BlockCued' % currently only designed for 1-arm
         %% 
@@ -969,7 +969,7 @@ switch SessionData.SettingsFile.GUIMeta.RiskType.String{SessionData.SettingsFile
                                         'HorizontalAlignment', 'right');
         
         %% Dedicated Analysis script and figure saving for BlockCued
-        % AnalysisFigure = TwoArmBanditVariant_BlockCued();
+        AnalysisFigure = TwoArmBanditVariant_Cued(DataFile);
 
     case 'CuedBlockRatio' % currently only designed for 1-arm
         %% 
@@ -1034,7 +1034,7 @@ switch SessionData.SettingsFile.GUIMeta.RiskType.String{SessionData.SettingsFile
                                         'HorizontalAlignment', 'right');
         
         %% Dedicated Analysis script and figure saving for CuedBlockRatio
-        % AnalysisFigure = TwoArmBanditVariant_CuedBlockRatio();
+        AnalysisFigure = TwoArmBanditVariant_Cued(DataFile);
         
     case 'CuedBlockITI' % currently only designed for 1-arm
         %% 
@@ -1099,7 +1099,7 @@ switch SessionData.SettingsFile.GUIMeta.RiskType.String{SessionData.SettingsFile
                                         'HorizontalAlignment', 'right');
 
         %% Dedicated Analysis script and figure saving for CuedBlockITI
-        % AnalysisFigure = TwoArmBanditVariant_CuedBlockITI();
+        AnalysisFigure = TwoArmBanditVariant_Cued(DataFile);
         
     case 'CuedBlockTau' % currently only designed for 1-arm
         %% 
