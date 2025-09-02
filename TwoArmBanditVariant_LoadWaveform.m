@@ -7,6 +7,8 @@ function TwoArmBanditVariant_LoadWaveform(Player, Mode, iTrial)
 % SkippedFeedbackSound -> 6
 % NotBaiedSFeedbackSound -> 7}
 % Sound Index 8 onwards are reserved for trial-dependent waveform (Max index for HiFi: 20; for Analog: 64)
+% Sound Index/profile 11 onwards are for optogenetics waveform (only for AOM)
+% Sound Index 20/64 is hard stop, i.e. no playback
 
 global BpodSystem
 global TaskParameters
@@ -177,6 +179,14 @@ switch Mode
                 Player.load(SoundIndex, NotBaitedSound);
             end
         end
+        
+        %%
+        HardStop = [];
+        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            Player.loadWaveform(64, HardStop);
+        elseif isfield(BpodSystem.ModuleUSB, 'HiFi1')
+            Player.load(20, HardStop);
+        end
 
     case 'TrialDependent'
         switch TaskParameters.GUIMeta.RiskType.String{TaskParameters.GUI.RiskType}
@@ -320,5 +330,185 @@ switch Mode
                     Player.load(SoundIndex, [LeftSound; RightSound]);
                 end
         end
+
+    case 'Opto'
+        %% Ch3
+        if TaskParameters.GUI.Ch3LoopedTonic == 1
+            Player.LoopDuration(3) = 20000; % 1hr = 3600s; 20000 > 5hr
+            Player.LoopMode{3} = 'On';
+        end
+
+        % tonic
+        SoundIndex = 21;
+        TonicTrain = [];
+        
+        Voltage = TaskParameters.GUI.Ch3TonicVoltage;
+        PulseNumber = TaskParameters.GUI.Ch3TonicPulseNumber;
+        TrainFreq = TaskParameters.GUI.Ch3TonicTrainFreq;
+        PulseWidth = TaskParameters.GUI.Ch3TonicPulseWidth;
+        if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
+            if TaskParameters.GUI.Ch3TonicPoisson
+                TonicTrain = Voltage * GeneratePoissonClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+                BpodSystem.Data.Custom.TrialData.Ch3TonicTrain{iTrial} = TonicTrain;
+            else
+                TonicTrain = Voltage * GenerateRegularClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+            end
+        end
+
+        if ~isempty(TonicTrain)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, TonicTrain);
+            end
+        end
+        
+        % phasic
+        SoundIndex = 22;
+        PhasicTrain = [];
+        
+        Voltage = TaskParameters.GUI.Ch3PhasicVoltage;
+        PulseNumber = TaskParameters.GUI.Ch3PhasicPulseNumber;
+        TrainFreq = TaskParameters.GUI.Ch3PhasicTrainFreq;
+        PulseWidth = TaskParameters.GUI.Ch3PhasicPulseWidth;
+        if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
+            PhasicTrain = Voltage * GenerateRegularClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+        end
+
+        if ~isempty(PhasicTrain)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, PhasicTrain);
+            end
+        end
+
+        %% Ch4
+        if TaskParameters.GUI.Ch4LoopedTonic == 1
+            Player.LoopDuration(4) = 20000; % 1hr = 3600s; 20000 > 5hr
+            Player.LoopMode{4} = 'On';
+        end
+
+        % tonic
+        SoundIndex = 23;
+        TonicTrain = [];
+        
+        Voltage = TaskParameters.GUI.Ch4TonicVoltage;
+        PulseNumber = TaskParameters.GUI.Ch4TonicPulseNumber;
+        TrainFreq = TaskParameters.GUI.Ch4TonicTrainFreq;
+        PulseWidth = TaskParameters.GUI.Ch4TonicPulseWidth;
+        if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
+            if TaskParameters.GUI.Ch4TonicPoisson
+                TonicTrain = Voltage * GeneratePoissonClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+                BpodSystem.Data.Custom.TrialData.Ch4TonicTrain{iTrial} = TonicTrain;
+            else
+                TonicTrain = Voltage * GenerateRegularClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+            end
+        end
+
+        if ~isempty(TonicTrain)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, TonicTrain);
+            end
+        end
+        
+        % phasic
+        SoundIndex = 24;
+        PhasicTrain = [];
+        
+        Voltage = TaskParameters.GUI.Ch4PhasicVoltage;
+        PulseNumber = TaskParameters.GUI.Ch4PhasicPulseNumber;
+        TrainFreq = TaskParameters.GUI.Ch4PhasicTrainFreq;
+        PulseWidth = TaskParameters.GUI.Ch4PhasicPulseWidth;
+        if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
+            PhasicTrain = Voltage * GenerateRegularClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+        end
+
+        if ~isempty(PhasicTrain)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, PhasicTrain);
+            end
+        end
+        
+        %% opto + sound
+        % opto-white noise
+        % usually when opto (final setting), no white noise is used in
+        % BrokeFixation, EarlyWithdrawl, IncorrectChoice. Even if so, 0.5s
+        % is enough to signal error (e.g. Cued + Early Withdrawl)
+        SoundIndex = 25;
+        OptoWhiteNoise = rand(1, fs * 0.5) * 2 - 1;
+
+        if ~isempty(OptoWhiteNoise)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, OptoWhiteNoise);
+            end
+        end
+        
+        % opto-0.5kHz
+        % usually for NotBaited Feedback (in non-final settings). 0.1s is the usualy setting 
+        SoundIndex = 26;
+        OptoNotBaitedSound = GenerateRiskCue(fs, 0.1, 'Freq', 0.5, 0.5);
+        
+        if ~isempty(OptoNotBaitedSound)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, OptoNotBaitedSound);
+            end
+        end
+        
+        % opto-1kHz
+        % usually for SkippedFeedback (in final settings, and StartNewTrialSound). 0.1s is the usualy setting 
+        SoundIndex = 27;
+        OptoSkippedFeedbackSound = GenerateRiskCue(fs, 0.1, 'Freq', 1, 1);
+
+        if ~isempty(OptoSkippedFeedbackSound)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, OptoSkippedFeedbackSound);
+            end
+        end
+        
+        %% trigger profile
+        % only opto
+        Player.TriggerProfiles(21:35, 3:4) = [64, 64; % 21: hard stop on ch3 & ch4
+                                              21,  0; % 22: only ch3 tonic, no stop in ch4
+                                              21, 64; % 23: only ch3 tonic, hard stop in ch4
+                                              21, 23; % 24: ch3 tonic, ch4 tonic
+                                              21, 24; % 25: ch3 tonic, ch4 phasic
+                                              22,  0; % 26: only ch3 phasic, no stop in ch4
+                                              22, 64; % 27: only ch3 phasic, hard stop in ch4
+                                              22, 23; % 28: ch3 phasic, ch4 tonic
+                                              22, 24; % 29: ch3 phasic, ch4 phasic
+                                               0, 23; % 30: no stop in ch3, tonic in ch4
+                                              64, 23; % 31: hard stop in ch3, tonic in ch4
+                                               0, 24; % 32: no stop in ch3, phasic in ch4
+                                              64, 24; % 33: hard stop in ch3, phasic in ch4
+                                              64,  0; % 34: hard stop in ch3, no stop in ch4
+                                               0, 64];% 35: no stop in ch3, hard stop in ch4
+        
+        % opto + white noise
+        Player.TriggerProfiles(36:43, 1:4) = [25, 25, 64, 64; % 36: hard stop on ch3 & ch4
+                                              25, 25, 21,  0; % 37: only ch3 tonic, no stop in ch4
+                                              25, 25, 21, 64; % 38: only ch3 tonic, hard stop in ch4
+                                              25, 25, 21, 23; % 39: ch3 tonic, ch4 tonic
+                                              25, 25,  0, 23; % 40: no stop in ch3, tonic in ch4
+                                              25, 25, 64, 23; % 41: hard stop in ch3, tonic in ch4
+                                              25, 25, 64,  0; % 42: hard stop in ch3, no stop in ch4
+                                              25, 25,  0, 64];% 43: no stop in ch3, hard stop in ch4
+        
+        % opto + 0.5kHz
+        Player.TriggerProfiles(44:51, 1:4) = [26, 26, 64, 64; % 44: hard stop on ch3 & ch4
+                                              26, 26, 21,  0; % 45: only ch3 tonic, no stop in ch4
+                                              26, 26, 21, 64; % 46: only ch3 tonic, hard stop in ch4
+                                              26, 26, 21, 23; % 47: ch3 tonic, ch4 tonic
+                                              26, 26,  0, 23; % 48: no stop in ch3, tonic in ch4
+                                              26, 26, 64, 23; % 49: hard stop in ch3, tonic in ch4
+                                              26, 26, 64,  0; % 50: hard stop in ch3, no stop in ch4
+                                              26, 26,  0, 64];% 51: no stop in ch3, hard stop in ch4
+        
+        % opto + 1kHz
+        Player.TriggerProfiles(44:51, 1:4) = [27, 27, 64, 64; % 44: hard stop on ch3 & ch4
+                                              27, 27, 21,  0; % 45: only ch3 tonic, no stop in ch4
+                                              27, 27, 21, 64; % 46: only ch3 tonic, hard stop in ch4
+                                              27, 27, 21, 23; % 47: ch3 tonic, ch4 tonic
+                                              27, 27,  0, 23; % 48: no stop in ch3, tonic in ch4
+                                              27, 27, 64, 23; % 49: hard stop in ch3, tonic in ch4
+                                              27, 27, 64,  0; % 50: hard stop in ch3, no stop in ch4
+                                              27, 27,  0, 64];% 51: no stop in ch3, hard stop in ch4
+        
 end % switch
 end % function

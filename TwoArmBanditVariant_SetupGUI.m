@@ -65,7 +65,13 @@ if isempty(fieldnames(TaskParameters))
     
     TaskParameters.GUI.StimDelayDistribution = 1;
     TaskParameters.GUIMeta.StimDelayDistribution.Style = 'popupmenu';
-    TaskParameters.GUIMeta.StimDelayDistribution.String = {'Fix', 'AutoIncr', 'TruncExp', 'Uniform', 'Beta'}; % Fix = fix time; AutoIncr = incremental along session; TruncExp = random drawn within a range with prob distribution based on TrucExp; Beta = like TruncExp, but with beta distribution
+    TaskParameters.GUIMeta.StimDelayDistribution.String = {'Fix', 'AutoIncr', 'TruncExp', 'Uniform', 'Beta'};
+    %{
+    Fix = fix time
+    AutoIncr = incremental along session
+    TruncExp = random drawn within a range with prob distribution based on TrucExp
+    Beta = like TruncExp, but with beta distribution
+    %}
     
     TaskParameters.GUI.StimDelayIncrStepSize = 0.01; % step size for autoincrementing stimulus delay time, for AutoIncr only
     TaskParameters.GUI.StimDelayDecrStepSize = 0.01;
@@ -105,7 +111,14 @@ if isempty(fieldnames(TaskParameters))
     %% FeedbackDelay, original named "Side Ports" ("waiting for feedback(either reward or punishment)")
     TaskParameters.GUI.FeedbackDelayDistribution = 1;
     TaskParameters.GUIMeta.FeedbackDelayDistribution.Style = 'popupmenu';
-    TaskParameters.GUIMeta.FeedbackDelayDistribution.String = {'Fix', 'AutoIncr', 'TruncExp', 'Beta'}; % Fix = fix time; AutoIncr = incremental along session; TruncExp = random drawn within a range with prob distribution based on TrucExp; Beta = like TruncExp, but with beta distribution
+    TaskParameters.GUIMeta.FeedbackDelayDistribution.String = {'Fix', 'AutoIncr', 'TruncExp', 'Beta'};
+    %{
+    Fix = fix time
+    AutoIncr = incremental along session
+    TruncExp = random drawn within a range with prob distribution based on TrucExp
+    Beta = like TruncExp, but with beta distribution
+    %}
+
     TaskParameters.GUI.FeedbackDelayMin = 0; % lower boundary for FeedbackDelay; after (i+1)th value is created, it is used to bound the value
     TaskParameters.GUI.FeedbackDelayMax = 0; % upper boundary for FeedbackDelay
     
@@ -152,7 +165,16 @@ if isempty(fieldnames(TaskParameters))
     
     TaskParameters.GUI.RiskType = 1;
     TaskParameters.GUIMeta.RiskType.Style = 'popupmenu';
-    TaskParameters.GUIMeta.RiskType.String = {'Fix', 'BlockRand', 'BlockFix', 'BlockFixHolding', 'Cued', 'BlockCued', 'CuedBlockRatio', 'CuedBlockITI', 'CuedBlockTau', 'BlockRandHolding'}; % decide how reward probability is expressed: Fix, based on RewardProbLeft value to express fix RewardProb; BlockRand, randomly draw a value between Min and Max and assign; BlockFix, based on Max and Min and reverse L-R value; Cue, cued by Tone
+    TaskParameters.GUIMeta.RiskType.String = {'Fix', 'BlockRand', 'BlockFix', 'BlockFixHolding',...
+                                              'Cued', 'BlockCued', 'CuedBlockRatio', 'CuedBlockITI',...
+                                              'CuedBlockTau', 'BlockRandHolding'};
+    %{
+    decide how reward probability is expressed:
+    Fix, based on RewardProbLeft value to express fix RewardProb
+    BlockRand, randomly draw a value between Min and Max and assign
+    BlockFix, based on Max and Min and reverse L-R value
+    Cue, cued by Tone
+    %}
     
     TaskParameters.GUI.RewardProbLeft = 0.5; % Reward Probability of Left Poke, only for Fix in RiskType
     TaskParameters.GUI.RewardProbRight = 0.5; % Reward Probability of Left Poke, only for Fix in RiskType
@@ -204,7 +226,7 @@ if isempty(fieldnames(TaskParameters))
     
     TaskParameters.GUIPanels.PhotometryRecording = {'Photometry', 'DbleFibers', 'Isobestic405', 'RedChannel'};
     
-    %plot photometry
+    %% plot photometry
     TaskParameters.GUI.TimeMin = -1;
     TaskParameters.GUI.TimeMax = 15;
     TaskParameters.GUI.NidaqMin = -5;
@@ -254,15 +276,221 @@ if isempty(fieldnames(TaskParameters))
                                                 'LED1_Name', 'LED1_Amp', 'LED1_Freq',...
                                                 'LED2_Name', 'LED2_Amp', 'LED2_Freq',...
                                                 'LED1b_Name', 'LED1b_Amp', 'LED1b_Freq'};
-                        
+    
     %% rig-specific
     TaskParameters.GUI.nidaqDev = 'Dev2';
     TaskParameters.GUIMeta.nidaqDev.Style = 'edittext';
 
     TaskParameters.GUIPanels.PhotometryRig = {'nidaqDev'};
     
+    %% Optogenetics
+    % AOM Ch3 train <- usually reserved for blue light
+    TaskParameters.GUI.Ch3Looped = 0; % need to set AOM master setting <- useful for non-stop tonic stimulation, or any playback > 20s x 50kHz
+	TaskParameters.GUIMeta.Ch3Looped.Style = 'checkbox';
+
+    TaskParameters.GUI.Ch3RepeatedTonicTrigger = 0; % if a tonic is playing, 0 = no trigger is made upon another tonic
+	TaskParameters.GUIMeta.Ch3RepeatedTonicTrigger.Style = 'checkbox';
+
+    TaskParameters.GUI.Ch3TonicPoisson = 0; % typically not compatible with Uninterrupted cos that statistics is not accurately Poisson
+	TaskParameters.GUIMeta.Ch3TonicPoisson.Style = 'checkbox';
+    
+    TaskParameters.GUI.Ch3TonicVoltage = 0;
+    TaskParameters.GUI.Ch3TonicTrainFreq = 5; % in Hz
+    TaskParameters.GUI.Ch3TonicPulseNumber = 20; % in second
+    TaskParameters.GUI.Ch3TonicPulseWidth = 0.010; % in second
+    
+    TaskParameters.GUI.Ch3TonicBlock = 1;
+    TaskParameters.GUIMeta.Ch3TonicBlock.Style = 'popupmenu';
+    TaskParameters.GUIMeta.Ch3TonicBlock.String = {'NoBlock', 'ToRiskBlock', 'NotToRiskBlock'};
+    TaskParameters.GUI.Ch3TonicBlockRangeMin = 0;
+    TaskParameters.GUI.Ch3TonicBlockRangeMax = 0;
+    %{
+    NoBlock: ignore BlockRange, only base on trigger percentage
+    ToRiskBlock: Relative to the Block structure of task, -1 = 1st block
+    before block change, +1 = 1st block after block change
+    NotToRiskBlock: separate block structure than the task block
+    %}
+
+    TaskParameters.GUI.Ch3PhasicVoltage = 0;
+    TaskParameters.GUI.Ch3PhasicTrainFreq = 30; % in Hz
+    TaskParameters.GUI.Ch3PhasicPulseNumber = 15; % in second
+    TaskParameters.GUI.Ch3PhasicPulseWidth = 0.010; % in second
+    
+    TaskParameters.GUI.Ch3PhasicBlock = 1;
+    TaskParameters.GUIMeta.Ch3PhasicBlock.Style = 'popupmenu';
+    TaskParameters.GUIMeta.Ch3PhasicBlock.String = {'NoBlock', 'ToRiskBlock', 'NotToRiskBlock'};
+    TaskParameters.GUI.Ch3PhasicBlockRangeMin = 0;
+    TaskParameters.GUI.Ch3PhasicBlockRangeMax = 0;
+    %{
+    NoBlock: ignore BlockRange, only base on trigger percentage
+    ToRiskBlock: Relative to the Block structure of task, -1 = 1st block
+    before block change, +1 = 1st block after block change
+    NotToRiskBlock: separate block structure than the task block
+    %}
+
+    TaskParameters.GUIPanels.AOMCh3Train = {'Ch3Looped', 'Ch3RepeatedTonicTrigger', 'Ch3TonicPoisson',...
+                                            'Ch3TonicVoltage', 'Ch3TonicTrainFreq', 'Ch3TonicPulseNumber', 'Ch3TonicPulseWidth',...
+                                            'Ch3TonicBlock', 'Ch3TonicBlockRangeMin', 'Ch3TonicBlockRangeMax',...
+                                            'Ch3PhasicVoltage', 'Ch3PhasicTrainFreq', 'Ch3PhasicPulseNumber', 'Ch3PhasicPulseWidth',...
+                                            'Ch3PhasicBlock', 'Ch3PhasicBlockRangeMin', 'Ch3PhasicBlockRangeMax'};
+
+    %% AOM Ch3 Trigger
+    TaskParameters.GUIMeta.WaitCInCh3Percentage = 0;
+    TaskParameters.GUI.WaitCInCh3Train = 3; % usually for non-stop continuous tonic stimulation
+    TaskParameters.GUIMeta.WaitCInCh3Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaitCInCh3Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.WaitCInCh3End = 2; % next state ('NoTrialStart') hard stop playback (Not for StartCIN will anyway trigger something)
+	TaskParameters.GUIMeta.WaitCInCh3End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaitCInCh3End.String = {'None', 'Stop', 'Tonic'};
+    
+    TaskParameters.GUIMeta.CInCh3Percentage = 0;
+    TaskParameters.GUI.CInCh3Train = 3; % usually for tonic
+    TaskParameters.GUIMeta.CInCh3Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.CInCh3Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.CInCh3End = 2; % next state ('EW', 'BF', 'ND', or 'WaitSIn') hard stop playback <- always all needs a stop
+	TaskParameters.GUIMeta.CInCh3End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.CInCh3End.String = {'None', 'Stop', 'Tonic'};
+    
+    TaskParameters.GUI.SInCh3Percentage = 0;
+    TaskParameters.GUI.SInCh3Train = 3;
+    TaskParameters.GUIMeta.SInCh3Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SInCh3Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.SInCh3End = 2; % next state ('Water', 'IncorrectChoice', 'SkippedFeedback', or 'NotBaited') hard stop playback
+	TaskParameters.GUIMeta.SInCh3End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SInCh3End.String = {'None', 'Stop', 'Tonic'};
+    
+    TaskParameters.GUI.WaterSCh3Percentage = 0;
+    TaskParameters.GUI.Ch3RewardReplacement = 0;
+    TaskParameters.GUIMeta.Ch3RewardReplacement.Style = 'checkbox';
+    TaskParameters.GUI.WaterSCh3Train = 3; % usually for phasic
+    TaskParameters.GUIMeta.WaterSCh3Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaterSCh3Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.WaterSCh3End = 1; % next state ('Drinking') hard stop playback
+	TaskParameters.GUIMeta.WaterSCh3End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaterSCh3End.String = {'None', 'Stop', 'Tonic'};
+
+    TaskParameters.GUI.SkippedFeedbackCh3Percentage = 0;
+    TaskParameters.GUI.SkippedFeedbackCh3Train = 3; % usually for phasic
+    TaskParameters.GUIMeta.SkippedFeedbackCh3Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.SkippedFeedbackCh3End = 0; % next state ('ITI') hard stop playback <- usually longer than SB-TimeOut
+	TaskParameters.GUIMeta.SkippedFeedbackCh3End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SkippedFeedbackCh3End.String = {'None', 'Stop', 'Tonic'};
+
+    TaskParameters.GUIPanels.AOMCh3Trigger = {'WaitCInCh3Percentage', 'WaitCInCh3Train', 'WaitCInCh3End',...
+                                              'CInCh3Percentage', 'CInCh3Train', 'CInCh3End',...
+                                              'SInCh3Percentage', 'SInCh3Train', 'SInCh3End',...
+                                              'WaterSCh3Percentage', 'Ch3RewardReplacement', 'WaterSCh3Train', 'WaterSCh3End',...
+                                              'SkippedFeedbackCh3Percentage', 'SkippedFeedbackCh3Train', 'SkippedFeedbackCh3End'};
+
+    %% AOM Ch4 train <- usually reserved for red light
+    TaskParameters.GUI.Ch4Looped = 0; % need to set AOM master setting <- useful for non-stop tonic stimulation, or any playback > 20s x 50kHz
+	TaskParameters.GUIMeta.Ch4Looped.Style = 'checkbox';
+    
+    TaskParameters.GUI.Ch4RepeatedTonicTrigger = 0;
+	TaskParameters.GUIMeta.Ch4RepeatedTonicTrigger.Style = 'checkbox';
+    
+    TaskParameters.GUI.Ch4TonicPoisson = 0;
+	TaskParameters.GUIMeta.Ch4TonicPoisson.Style = 'checkbox';
+    
+    TaskParameters.GUI.Ch4TonicVoltage = 0;
+    TaskParameters.GUI.Ch4TonicTrainFreq = 5; % in Hz
+    TaskParameters.GUI.Ch4TonicPulseNumber = 20; % in second    
+    TaskParameters.GUI.Ch4TonicPulseWidth = 0.010; % in second
+    
+    TaskParameters.GUI.Ch4TonicBlock = 1;
+    TaskParameters.GUIMeta.Ch4TonicBlock.Style = 'popupmenu';
+    TaskParameters.GUIMeta.Ch4TonicBlock.String = {'NoBlock', 'ToRiskBlock', 'NotToRiskBlock'};
+    TaskParameters.GUI.Ch4TonicBlockRangeMin = 0;
+    TaskParameters.GUI.Ch4TonicBlockRangeMax = 0;
+    %{
+    NoBlock: ignore BlockRange, only base on trigger percentage
+    ToRiskBlock: Relative to the Block structure of task, -1 = 1st block
+    before block change, +1 = 1st block after block change
+    NotToRiskBlock: separate block structure than the task block
+    %}
+
+    TaskParameters.GUI.Ch4PhasicVoltage = 0;
+    TaskParameters.GUI.Ch4PhasicTrainFreq = 30; % in Hz
+    TaskParameters.GUI.Ch4PhasicPulseNumber = 15; % in second
+    TaskParameters.GUI.Ch4PhasicTrainDuration = sprintf('%4.2fs', TaskParameters.GUI.Ch4PhasicPulseNumber ./ TaskParameters.GUI.Ch4PhasicTrainFreq);
+    TaskParameters.GUIMeta.Ch4PhasicTrainDuration.Style = 'text';
+    
+    TaskParameters.GUI.Ch4PhasicPulseWidth = 0.010; % in second
+    TaskParameters.GUI.Ch4PhasicPulseWidthRatio = sprintf('%3.0f%%', TaskParameters.GUI.Ch4PhasicPulseWidth * TaskParameters.GUI.Ch4PhasicTrainFreq * 100); % if > 100% = 1 long pulse
+    TaskParameters.GUIMeta.Ch4PhasicPulseWidthRatio.Style = 'text';
+    
+    TaskParameters.GUI.Ch4PhasicBlock = 1;
+    TaskParameters.GUIMeta.Ch4PhasicBlock.Style = 'popupmenu';
+    TaskParameters.GUIMeta.Ch4PhasicBlock.String = {'NoBlock', 'ToRiskBlock', 'NotToRiskBlock'};
+    TaskParameters.GUI.Ch4PhasicBlockRangeMin = 0;
+    TaskParameters.GUI.Ch4PhasicBlockRangeMax = 0;
+    %{
+    NoBlock: ignore BlockRange, only base on trigger percentage
+    ToRiskBlock: Relative to the Block structure of task, -1 = 1st block
+    before block change, +1 = 1st block after block change
+    NotToRiskBlock: separate block structure than the task block
+    %}
+
+    TaskParameters.GUIPanels.AOMCh4Train = {'Ch4Looped', 'Ch4RepeatedTonicTrigger', 'Ch4TonicPoisson',...
+                                            'Ch4TonicVoltage', 'Ch4TonicTrainFreq', 'Ch4TonicPulseNumber', 'Ch4TonicPulseWidth',...
+                                            'Ch4TonicBlock', 'Ch4TonicBlockRangeMin', 'Ch4TonicBlockRangeMax',...
+                                            'Ch4PhasicVoltage', 'Ch4PhasicTrainFreq', 'Ch4PhasicPulseNumber', 'Ch4PhasicPulseWidth',...
+                                            'Ch4PhasicBlock', 'Ch4PhasicBlockRangeMin', 'Ch4PhasicBlockRangeMax'};
+
+    %% AOM Ch4 Trigger
+    TaskParameters.GUIMeta.WaitCInCh4Percentage = 0;
+    TaskParameters.GUI.WaitCInCh4Train = 3; % usually for non-stop continuous tonic stimulation
+    TaskParameters.GUIMeta.WaitCInCh4Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaitCInCh4Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.WaitCInCh4End = 2; % next state ('NoTrialStart' or 'StartCIn') hard stop playback
+	TaskParameters.GUIMeta.WaitCInCh4End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaitCInCh4End.String = {'None', 'Stop', 'Tonic'};
+    
+    TaskParameters.GUIMeta.CInCh4Percentage = 0;
+    TaskParameters.GUI.CInCh4Train = 3; % usually for tonic
+    TaskParameters.GUIMeta.CInCh4Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.CInCh4Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.CInCh4End = 2; % next state ('EW', 'BF', 'ND', or 'WaitSIn') hard stop playback <- always all needs a stop
+	TaskParameters.GUIMeta.CInCh4End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.CInCh4End.String = {'None', 'Stop', 'Tonic'};
+    
+    TaskParameters.GUI.SInCh4Percentage = 0;
+    TaskParameters.GUI.SInCh4Train = 3;
+    TaskParameters.GUIMeta.SInCh4Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SInCh4Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.SInCh4End = 2; % next state ('Water', 'IncorrectChoice', 'SkippedFeedback', or 'NotBaited') hard stop playback
+	TaskParameters.GUIMeta.SInCh4End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SInCh4End.String = {'None', 'Stop', 'Tonic'};
+    
+    TaskParameters.GUI.WaterSCh4Percentage = 0;
+    TaskParameters.GUI.Ch4RewardReplacement = 0;
+    TaskParameters.GUIMeta.Ch4RewardReplacement.Style = 'checkbox';
+    TaskParameters.GUI.WaterSCh4Train = 3; % usually for phasic
+    TaskParameters.GUIMeta.WaterSCh4Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaterSCh4Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.WaterSCh4End = 1; % next state ('Drinking') hard stop playback
+	TaskParameters.GUIMeta.WaterSCh4End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.WaterSCh4End.String = {'None', 'Stop', 'Tonic'};
+
+    TaskParameters.GUI.SkippedFeedbackCh4Percentage = 0;
+    TaskParameters.GUI.SkippedFeedbackCh4Train = 3; % usually for phasic
+    TaskParameters.GUIMeta.SkippedFeedbackCh4Train.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String = {'Tonic', 'Phasic', 'None'};
+    TaskParameters.GUI.SkippedFeedbackCh4End = 0; % next state ('ITI') hard stop playback <- usually longer than SB-TimeOut
+	TaskParameters.GUIMeta.SkippedFeedbackCh4End.Style = 'popupmenu';
+    TaskParameters.GUIMeta.SkippedFeedbackCh4End.String = {'None', 'Stop', 'Tonic'};
+
+    TaskParameters.GUIPanels.AOMCh4Trigger = {'WaitCInCh4Percentage', 'WaitCInCh4Train', 'WaitCInCh4End',...
+                                              'CInCh4Percentage', 'CInCh4Train', 'CInCh4End',...
+                                              'SInCh4Percentage', 'SInCh4Train', 'SInCh4End',...
+                                              'WaterSCh4Percentage', 'Ch4RewardReplacement', 'WaterSCh4Train', 'WaterSCh4End',...
+                                              'SkippedFeedbackCh4Percentage', 'SkippedFeedbackCh4Train', 'SkippedFeedbackCh4End'};
+    
+    %% GUI figure
     TaskParameters.GUITabs.General = {'General', 'Sampling', 'Reward', 'FeedbackDelay'};
     TaskParameters.GUITabs.Photometry = {'PhotometryRecording', 'PhotometryNidaq', 'PhotometryPlot', 'PhotometryRig'};
+    TaskParameters.GUITabs.Optogenetics = {'AOMCh3Train', 'AOMCh3Trigger', 'AOMCh4Train', 'AOMCh4Trigger'};
        
     TaskParameters.GUI = orderfields(TaskParameters.GUI);
     TaskParameters.Figures.OutcomePlot.Position = [100, 100, 800, 600];

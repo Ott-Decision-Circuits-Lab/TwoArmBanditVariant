@@ -32,6 +32,7 @@ if ~BpodSystem.EmulatorMode % Sound/laser waveform generation is not compulsory 
         end
 
         TwoArmBanditVariant_LoadWaveform(Player, 'TrialIndependent'); %Taking the last Player for now as the WaveformPlayer
+        
     end
 else
     disp('Warning: Sound or laser will not be played in emulator mode.')
@@ -57,6 +58,13 @@ while RunSession
         TwoArmBanditVariant_LoadWaveform(Player, 'TrialDependent', iTrial); % Load stimuli trains to wave player if not EmulatorMode
     end
     
+    %% load optogenetic train to modules <- to accomodate poisson train, has to recalculate at every trial
+    if isempty(Laser)
+        TwoArmBanditVariant_LoadWaveform(Player, 'Opto', iTrial); %Taking the last Player for now as the WaveformPlayer
+    else
+        TwoArmBanditVariant_LoadWaveform(Laser, 'Opto', iTrial); %Taking the last Player for now as the WaveformPlayer
+    end
+
     %% set up state matrix and send to bpod
     sma = TwoArmBanditVariant_StateMatrix(iTrial);
     SendStateMatrix(sma);
