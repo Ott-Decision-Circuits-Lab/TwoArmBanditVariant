@@ -754,8 +754,8 @@ end
 
 %% WaterL
 WaterLAction = {'ValveState', LeftValve};
-if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement)...
-   || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
+if (TrialData.WaterSCh3Trigger(iTrial) && TaskParameters.GUI.Ch3RewardReplacement)...
+   || (TrialData.WaterSCh4Trigger(iTrial) && TaskParameters.GUI.Ch4RewardReplacement)
     WaterLAction = WaterSOpto;
 else
     WaterLAction = [WaterLAction, WaterSOpto];
@@ -768,8 +768,8 @@ sma = AddState(sma,...
 
 %% WaterR
 WaterRAction = {'ValveState', RightValve};
-if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement)...
-   || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
+if (TrialData.WaterSCh3Trigger(iTrial) && TaskParameters.GUI.Ch3RewardReplacement)...
+   || (TrialData.WaterSCh4Trigger(iTrial) && TaskParameters.GUI.Ch4RewardReplacement)
     WaterRAction = WaterSOpto;
 else
     WaterRAction = [WaterRAction, WaterSOpto];
@@ -827,7 +827,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SkippedFeedbackCh3Key = 'None';
     end
 
-    if strcmpi(SkippedFeedbackCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+    if strcmpi(SkippedFeedbackCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger(iTrial) && strcmpi(SInCh3End, 'Tonic')
         SkippedFeedbackCh3Key = 'None';
     end
     
@@ -838,7 +838,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SkippedFeedbackCh4Key = 'None';
     end
 
-    if strcmpi(SkippedFeedbackCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+    if strcmpi(SkippedFeedbackCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger(iTrial) && strcmpi(SInCh3End, 'Tonic')
         SkippedFeedbackCh4Key = 'None';
     end
     
@@ -890,13 +890,13 @@ EndSkippedFeedbackAction = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     SkippedFeedbackCh3End = TaskParameters.GUIMeta.SkippedFeedbackCh3End.String{TaskParameters.GUI.SkippedFeedbackCh3End};
     SkippedFeedbackCh3EndKey = SkippedFeedbackCh3End;
-    if strcmpi(SkippedFeedbackCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SkippedFeedbackCh3Train, 'Tonic')
+    if strcmpi(SkippedFeedbackCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger(iTrial) && strcmpi(SkippedFeedbackCh3Train, 'Tonic')
         SkippedFeedbackCh3EndKey = 'None';
     end
 
     SkippedFeedbackCh4End = TaskParameters.GUIMeta.SkippedFeedbackCh4End.String{TaskParameters.GUI.SkippedFeedbackCh4End};
     SkippedFeedbackCh4EndKey = SkippedFeedbackCh4End;
-    if strcmpi(SkippedFeedbackCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SkippedFeedbackCh4Train, 'Tonic')
+    if strcmpi(SkippedFeedbackCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger(iTrial) && strcmpi(SkippedFeedbackCh4Train, 'Tonic')
         SkippedFeedbackCh4EndKey = 'None';
     end
 
