@@ -30,6 +30,39 @@ RightValve = 2^(RightPort - 1);
 LeftValveTime  = GetValveTimes(TrialData.RewardMagnitude(1, iTrial), LeftPort);
 RightValveTime  = GetValveTimes(TrialData.RewardMagnitude(2, iTrial), RightPort);
 
+%% OptoTable
+OptoTable = table('Size', [4, 4],...
+                  'VariableTypes', {'double', 'double', 'double', 'double'},...
+                  'VariableNames', {'None', 'Stop', 'Tonic', 'Phasic'},...
+                  'RowNames', {'None', 'Stop', 'Tonic', 'Phasic'},...
+                  'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
+
+OptoTable(:, :) = num2cell(reshape([63, 10:24], 4, 4)');
+
+OptoWhiteNoiseTable = table('Size', [3, 3],...
+                            'VariableTypes', {'double', 'double', 'double'},...
+                            'VariableNames', {'None', 'Stop', 'Tonic'},...
+                            'RowNames', {'None', 'Stop', 'Tonic'},...
+                            'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
+
+OptoWhiteNoiseTable(:, :) = num2cell(reshape([63, 25:32], 3, 3)');
+
+Opto500HzTable = table('Size', [3, 3],...
+                        'VariableTypes', {'double', 'double', 'double'},...
+                        'VariableNames', {'None', 'Stop', 'Tonic'},...
+                        'RowNames', {'None', 'Stop', 'Tonic'},...
+                        'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
+
+Opto500HzTable(:, :) = num2cell(reshape([63, 33:40], 3, 3)');
+
+Opto1kHzTable = table('Size', [4, 4],...
+                      'VariableTypes', {'double', 'double', 'double', 'double'},...
+                      'VariableNames', {'None', 'Stop', 'Tonic', 'Phasic'},...
+                      'RowNames', {'None', 'Stop', 'Tonic', 'Phasic'},...
+                      'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
+
+Opto1kHzTable(:, :) = num2cell(reshape([63, 41:55], 4, 4)');
+
 %% Set up state matrix    
 sma = NewStateMatrix();
 
@@ -42,62 +75,33 @@ if isfield(TaskParameters.GUI, 'Wire1VideoTrigger')
         case 2 % Investment
 
         case 3 % All
-            PreITIAction =	{'WireState', 1};
+            PreITIAction =	[PreITIAction, {'WireState', 1}];
     end
             
 end
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-    if TrialData.WaitCInCh3Phasic(iTrial)
-        if TrialData.WaitCInCh4Phasic(iTrial)
-            PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 28]}]; % phasic ch3, phasic ch4
-        elseif TrialData.WaitCInCh4Tonic(iTrial)
-            if TaskParameters.GUI.Ch4RepeatedTonicTrigger || iTrial == 1 || ~TrialData.Ch4TonicCarriedForward(iTrial-1)
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 27]}]; % phasic ch3, tonic ch4
-            else
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 25]}]; % phasic ch3, no stop ch4
-            end
-        else
-            PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 26]}]; % phasic ch3, hard stop ch4
-        end
-    elseif TrialData.WaitCInCh3Tonic(iTrial)
-        if TaskParameters.GUI.Ch3RepeatedTonicTrigger || iTrial == 1 || ~TrialData.Ch3TonicCarriedForward(iTrial-1)
-            if TrialData.WaitCInCh4Phasic(iTrial)
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 24]}]; % tonic ch3, phasic ch4
-            elseif TrialData.WaitCInCh4Tonic(iTrial)
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || iTrial == 1 || ~TrialData.Ch4TonicCarriedForward(iTrial-1)
-                    PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 23]}]; % tonic ch3, tonic ch4
-                else
-                    PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 21]}]; % tonic ch3, no stop ch4
-                end
-            else
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 22]}]; % tonic ch3, hard stop ch4
-            end
-        else
-            if TrialData.WaitCInCh4Phasic(iTrial)
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 31]}]; % no stop ch3, phasic ch4
-            elseif TrialData.WaitCInCh4Tonic(iTrial)
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || iTrial == 1 || ~TrialData.Ch4TonicCarriedForward(iTrial-1)
-                    PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 29]}]; % no stop ch3, tonic ch4
-                else
-                    % no stop ch3, no stop ch4, i.e. do nothing
-                end
-            else
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 34]}];  % no stop ch3, hard stop ch4
-            end
-        end
-    else
-        if TrialData.WaitCInCh4Phasic(iTrial)
-            PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 32]}]; % hard stop ch3, phasic ch4
-        elseif TrialData.WaitCInCh4Tonic(iTrial)
-            if TaskParameters.GUI.Ch4RepeatedTonicTrigger || iTrial == 1 || ~TrialData.Ch4TonicCarriedForward(iTrial-1)
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 30]}]; % hard stop ch3, tonic ch4
-            else
-                PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 33]}]; % hard stop ch3, no stop ch4
-            end
-        else
-            PreITIAction =	[PreITIAction, {'WavePlayer1', ['P' 20]}]; % hard stop ch3, hard stop ch4
-        end
+    WaitCInCh3Train = TaskParameters.GUIMeta.WaitCInCh3Train.String{TaskParameters.GUI.WaitCInCh3Train};
+    WaitCInCh3Key = WaitCInCh3Train;
+    if ~TrialData.WaitCInCh3Trigger(iTrial)
+        WaitCInCh3Key = 'None';
     end
+
+    if strcmpi(WaitCInCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && iTrial ~= 1 && TrialData.Ch3TonicCarriedForward(iTrial-1)
+        WaitCInCh3Key = 'None';
+    end
+    
+
+    WaitCInCh4Train = TaskParameters.GUIMeta.WaitCInCh4Train.String{TaskParameters.GUI.WaitCInCh4Train};
+    WaitCInCh4Key = WaitCInCh4Train;
+    if ~TrialData.WaitCInCh4Trigger(iTrial)
+        WaitCInCh4Key = 'None';
+    end
+
+    if strcmpi(WaitCInCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && iTrial ~= 1 && TrialData.Ch4TonicCarriedForward(iTrial-1)
+        WaitCInCh4Key = 'None';
+    end
+
+    PreITIAction = [PreITIAction, {'WavePlayer1', ['P', OptoTable{WaitCInCh3Key, WaitCInCh4Key}]}];
 end
 sma = AddState(sma,...
                'Name', 'PreITI',...
@@ -116,73 +120,18 @@ sma = AddState(sma,...
 %% NoTrialStart
 NoTrialStartAction = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-    switch TaskParameters.GUIMeta.WaitCInCh3End.String{TaskParameters.GUI.WaitCInCh3End}
-        case 'None'
-            switch TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End}
-                case 'None'
-                    % no stop ch3, no stop ch4, i.e. do nothing
-    
-                case 'Stop'
-                    NoTrialStartAction = {'WavePlayer1', ['P' 34]}; % no stop ch3, hard stop ch4
-    
-                case 'Tonic'
-                    if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                        NoTrialStartAction = {'WavePlayer1', ['P' 29]}; % no stop ch3, tonic ch4
-                    else
-                        % no stop ch3, no stop ch4, i.e. do nothing
-                    end
-            end
-    
-        case 'Stop'
-            switch TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End}
-                case 'None'
-                    NoTrialStartAction = {'WavePlayer1', ['P' 33]}; % hard stop ch3, no stop ch4
-    
-                case 'Stop'
-                    NoTrialStartAction = {'WavePlayer1', ['P' 20]}; % hard stop ch3, hard stop ch4
-    
-                case 'Tonic'
-                    if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                        NoTrialStartAction = {'WavePlayer1', ['P' 30]}; % hard stop ch3, tonic ch4
-                    else
-                        NoTrialStartAction = {'WavePlayer1', ['P' 33]}; % hard stop ch3, no stop ch4
-                    end
-            end
-    
-        case 'Tonic'
-            if TaskParameters.GUI.Ch3RepeatedTonicTrigger || ~TrialData.WaitCInCh3Tonic(iTrial)
-                switch TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End}
-                    case 'None'
-                        NoTrialStartAction = {'WavePlayer1', ['P' 21]}; % tonic ch3, no stop ch4
-        
-                    case 'Stop'
-                        NoTrialStartAction = {'WavePlayer1', ['P' 22]}; % tonic ch3, hard stop ch4
-        
-                    case 'Tonic'
-                        if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                            NoTrialStartAction = {'WavePlayer1', ['P' 23]}; % tonic ch3, tonic ch4
-                        else
-                            NoTrialStartAction = {'WavePlayer1', ['P' 21]}; % tonic ch3, no stop ch4
-                        end
-                end
-            else
-                switch TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End}
-                    case 'None'
-                        % no stop ch3, no stop ch4, i.e. do nothing
-        
-                    case 'Stop'
-                        NoTrialStartAction = {'WavePlayer1', ['P' 34]}; % no stop ch3, hard stop ch4
-        
-                    case 'Tonic'
-                        if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                            NoTrialStartAction = {'WavePlayer1', ['P' 29]}; % no stop ch3, tonic ch4
-                        else
-                            % no stop ch3, no stop ch4, i.e. do nothing
-                        end
-                end
-            end
-    
+    WaitCInCh3End = TaskParameters.GUIMeta.WaitCInCh3End.String{TaskParameters.GUI.WaitCInCh3End};
+    WaitCInCh3EndKey = WaitCInCh3End;
+    if strcmpi(WaitCInCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(WaitCInCh3Train, 'Tonic')
+        WaitCInCh3EndKey = 'None';
     end
+
+    WaitCInCh4End = TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End};
+    WaitCInCh4EndKey = WaitCInCh4End;
+    if strcmpi(WaitCInCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(WaitCInCh4Train, 'Tonic')
+        WaitCInCh4EndKey = 'None';
+    end
+    NoTrialStartAction = [NoTrialStartAction, {'WavePlaye1', ['P', OptoTable{WaitCInCh3EndKey, WaitCInCh4EndKey}]}];
 end
 sma = AddState(sma,...
                'Name', 'NoTrialStart',...
@@ -208,57 +157,28 @@ sma = AddState(sma,...
 %% StimulusDelay
 StimulusDelayAction = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-    if TrialData.CInCh3Phasic(iTrial)
-        if TrialData.CInCh4Phasic(iTrial)
-            StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 28]}]; % phasic ch3, phasic ch4
-        elseif TrialData.CInCh4Tonic(iTrial)
-            if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 27]}]; % phasic ch3, tonic ch4
-            else
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 25]}]; % phasic ch3, no stop ch4
-            end
-        else
-            StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 26]}]; % phasic ch3, hard stop ch4
-        end
-    elseif TrialData.CInCh3Tonic(iTrial)
-        if TaskParameters.GUI.Ch3RepeatedTonicTrigger || ~TrialData.WaitCInCh3Tonic(iTrial)
-            if TrialData.CInCh4Phasic(iTrial)
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 24]}]; % tonic ch3, phasic ch4
-            elseif TrialData.CInCh4Tonic(iTrial)
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                    StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 23]}]; % tonic ch3, tonic ch4
-                else
-                    StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 21]}]; % tonic ch3, no stop ch4
-                end
-            else
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 22]}]; % tonic ch3, hard stop ch4
-            end
-        else
-            if TrialData.CInCh4Phasic(iTrial)
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 31]}]; % no stop ch3, phasic ch4
-            elseif TrialData.CInCh4Tonic(iTrial)
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                    StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 29]}]; % no stop ch3, tonic ch4
-                else
-                    % no stop ch3, no stop ch4, i.e. do nothing
-                end
-            else
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 34]}];  % no stop ch3, hard stop ch4
-            end
-        end
-    else
-        if TrialData.CInCh4Phasic(iTrial)
-            StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 32]}]; % hard stop ch3, phasic ch4
-        elseif TrialData.CInCh4Tonic(iTrial)
-            if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.WaitCInCh4Tonic(iTrial)
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 30]}]; % hard stop ch3, tonic ch4
-            else
-                StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 33]}]; % hard stop ch3, no stop ch4
-            end
-        else
-            StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P' 20]}]; % hard stop ch3, hard stop ch4
-        end
+    CInCh3Train = TaskParameters.GUIMeta.CInCh3Train.String{TaskParameters.GUI.CInCh3Train};
+    CInCh3Key = CInCh3Train;
+    if ~TrialData.CInCh3Trigger(iTrial)
+        CInCh3Key = 'None';
     end
+
+    if strcmpi(CInCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(WaitCInCh3Train, 'Tonic')
+        CInCh3Key = 'None';
+    end
+    
+
+    CInCh4Train = TaskParameters.GUIMeta.CInCh4Train.String{TaskParameters.GUI.CInCh4Train};
+    CInCh4Key = CInCh4Train;
+    if ~TrialData.CInCh4Trigger(iTrial)
+        CInCh4Key = 'None';
+    end
+
+    if strcmpi(CInCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(WaitCInCh4Train, 'Tonic')
+        CInCh4Key = 'None';
+    end
+
+    StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P', OptoTable{CInCh3Key, CInCh4Key}]}];
 end
 sma = AddState(sma,...
                'Name', 'StimulusDelay',...
@@ -270,141 +190,23 @@ sma = AddState(sma,...
 
 %% CInEndOpto
 CInEndOpto = {};
-switch TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End}
-    case 'None'
-        switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-            case 'None'
-                % no stop ch3, no stop ch4, i.e. do nothing
-
-            case 'Stop'
-                CInEndOpto = {'WavePlayer1', ['P' 34]}; % no stop ch3, hard stop ch4
-
-            case 'Tonic'
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                    CInEndOpto = {'WavePlayer1', ['P' 29]}; % no stop ch3, tonic ch4
-                else
-                    % no stop ch3, no stop ch4, i.e. do nothing
-                end
-        end
-
-    case 'Stop'
-        switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-            case 'None'
-                CInEndOpto = {'WavePlayer1', ['P' 33]}; % hard stop ch3, no stop ch4
-
-            case 'Stop'
-                CInEndOpto = {'WavePlayer1', ['P' 20]}; % hard stop ch3, hard stop ch4
-
-            case 'Tonic'
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                    CInEndOpto = {'WavePlayer1', ['P' 30]}; % hard stop ch3, tonic ch4
-                else
-                    CInEndOpto = {'WavePlayer1', ['P' 33]}; % hard stop ch3, no stop ch4
-                end
-        end
-
-    case 'Tonic'
-        if TaskParameters.GUI.Ch3RepeatedTonicTrigger || ~TrialData.CInCh3Tonic(iTrial)
-            switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-                case 'None'
-                    CInEndOpto = {'WavePlayer1', ['P' 21]}; % tonic ch3, no stop ch4
-    
-                case 'Stop'
-                    CInEndOpto = {'WavePlayer1', ['P' 22]}; % tonic ch3, hard stop ch4
-    
-                case 'Tonic'
-                    if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                        CInEndOpto = {'WavePlayer1', ['P' 23]}; % tonic ch3, tonic ch4
-                    else
-                        CInEndOpto = {'WavePlayer1', ['P' 21]}; % tonic ch3, no stop ch4
-                    end
-            end
-        else
-            switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-                case 'None'
-                    % no stop ch3, no stop ch4, i.e. do nothing
-    
-                case 'Stop'
-                    CInEndOpto = {'WavePlayer1', ['P' 34]}; % no stop ch3, hard stop ch4
-    
-                case 'Tonic'
-                    if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                        CInEndOpto = {'WavePlayer1', ['P' 29]}; % no stop ch3, tonic ch4
-                    else
-                        % no stop ch3, no stop ch4, i.e. do nothing
-                    end
-            end
-        end
-end % end switch
-
 CInEndOptoWhiteNoise = {};
-switch TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End}
-    case 'None'
-        switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-            case 'None'
-                CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 0]}; % no stop ch3, no stop ch4, i.e. do nothing
+if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
+    CInCh3End = TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End};
+    CInCh3EndKey = CInCh3End;
+    if strcmpi(CInCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(CInCh3Train, 'Tonic')
+        CInCh3EndKey = 'None';
+    end
 
-            case 'Stop'
-                CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 42]}; % no stop ch3, hard stop ch4
+    CInCh4End = TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End};
+    CInCh4EndKey = CInCh4End;
+    if strcmpi(CInCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(CInCh4Train, 'Tonic')
+        CInCh4EndKey = 'None';
+    end
 
-            case 'Tonic'
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 39]}; % no stop ch3, tonic ch4
-                else
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 0]}; % no stop ch3, no stop ch4, i.e. do nothing
-                end
-        end
-
-    case 'Stop'
-        switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-            case 'None'
-                CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 41]}; % hard stop ch3, no stop ch4
-
-            case 'Stop'
-                CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 35]}; % hard stop ch3, hard stop ch4
-
-            case 'Tonic'
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 40]}; % hard stop ch3, tonic ch4
-                else
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 41]}; % hard stop ch3, no stop ch4
-                end
-        end
-
-    case 'Tonic'
-        if TaskParameters.GUI.Ch3RepeatedTonicTrigger || ~TrialData.CInCh3Tonic(iTrial)
-            switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-                case 'None'
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 36]}; % tonic ch3, no stop ch4
-    
-                case 'Stop'
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 37]}; % tonic ch3, hard stop ch4
-    
-                case 'Tonic'
-                    if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                        CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 38]}; % tonic ch3, tonic ch4
-                    else
-                        CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 36]}; % tonic ch3, no stop ch4
-                    end
-            end
-        else
-            switch TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}
-                case 'None'
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 0]}; % no stop ch3, no stop ch4, i.e. do nothing
-    
-                case 'Stop'
-                    CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 42]}; % no stop ch3, hard stop ch4
-    
-                case 'Tonic'
-                    if TaskParameters.GUI.Ch4RepeatedTonicTrigger || ~TrialData.CInCh4Tonic(iTrial)
-                        CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 39]}; % no stop ch3, tonic ch4
-                    else
-                        CInEndOptoWhiteNoise = {'WavePlayer1', ['P' 0]}; % no stop ch3, no stop ch4, i.e. do nothing
-                    end
-            end
-        end
-
-end % end switch
+    CInEndOpto = {'WavePlaye1', ['P', OptoTable{CInCh3EndKey, CInCh4EndKey}]};
+    CInEndOptoWhiteNoise = {'WavePlaye1', ['P', OptoWhiteNoiseTable{CInCh3EndKey, CInCh4EndKey}]};
+end
 
 %% BrokeFixation
 TupStateChange = 'ITI';
@@ -414,19 +216,16 @@ end
 BrokeFixationAction = {};
 switch TaskParameters.GUIMeta.BrokeFixationFeedback.String{TaskParameters.GUI.BrokeFixationFeedback}
     case 'None' % only opto adjustment
-        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-            BrokeFixationAction = [BrokeFixationAction, CInEndOpto];
-        end % end if
+        BrokeFixationAction = [BrokeFixationAction, CInEndOpto];
         
     case 'WhiteNoise' % sound + opto
         if isfield(BpodSystem.ModuleUSB, 'HiFi1') % prioritize HiFi for sound
             BrokeFixationAction = [BrokeFixationAction, {'HiFi1', ['P' 0]}];
+            BrokeFixationAction = [BrokeFixationAction, CInEndOpto];
 
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-               BrokeFixationAction = [BrokeFixationAction, CInEndOpto];
-            end
         elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
             BrokeFixationAction = [BrokeFixationAction, CInEndOptoWhiteNoise];
+
         elseif BpodSystem.EmulatorMode
             disp('BpodSystem is in EmulatorMode. No BrokeFixation WhiteNoise is played.');
         else
@@ -532,7 +331,7 @@ sma = AddState(sma,...
                                          RightPortIn, 'EarlyWithdrawal'},...
                'OutputActions', {});
 
-%% 
+%% EarlyWithdrawal
 TupStateChange = 'ITI';
 if TaskParameters.GUI.RenewEarlyWithdrawal
     TupStateChange = 'WaitCIn';
@@ -540,19 +339,16 @@ end
 EarlyWithdrawalAction = {};
 switch TaskParameters.GUIMeta.EarlyWithdrawalFeedback.String{TaskParameters.GUI.EarlyWithdrawalFeedback}
     case 'None'
-        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-            EarlyWithdrawalAction = [EarlyWithdrawalAction, CInEndOpto];
-        end % end if
+        EarlyWithdrawalAction = [EarlyWithdrawalAction, CInEndOpto];
 
     case 'WhiteNoise'
         if isfield(BpodSystem.ModuleUSB, 'HiFi1') % prioritize HiFi for sound
             EarlyWithdrawalAction = [EarlyWithdrawalAction, {'HiFi1', ['P' 1]}];
-
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                EarlyWithdrawalAction = [EarlyWithdrawalAction, CInEndOpto];
-            end
+            EarlyWithdrawalAction = [EarlyWithdrawalAction, CInEndOpto];
+            
         elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
             EarlyWithdrawalAction = [EarlyWithdrawalAction, CInEndOptoWhiteNoise];
+
         elseif BpodSystem.EmulatorMode
             disp('BpodSystem is in EmulatorMode. No EarlyWithdrawal WhiteNoise will be played.');
         else
@@ -566,7 +362,7 @@ sma = AddState(sma,...
                'StateChangeConditions', {'Tup', TupStateChange},...
                'OutputActions', EarlyWithdrawalAction);
 
-%% StillSampling
+%% LightValue
 CInStateChange = 'WaitSIn';
 CenterLightValue = 0;
 if TaskParameters.GUI.StartNewTrialEnable
@@ -582,6 +378,7 @@ elseif TrialData.LightLeft(iTrial) == false
     LeftLightValue = 0;
 end
 
+%% StillSampling
 sma = SetGlobalTimer(sma, 2, TaskParameters.GUI.ChoiceDeadline); % used to track side poke grace period
 
 sma = AddState(sma,...
@@ -595,32 +392,11 @@ sma = AddState(sma,...
                                  RightLight, RightLightValue...
                                  CenterLight, CenterLightValue});
 
-%% WaitSin
+%% WaitSIn
 WaitSInAction = {LeftLight, LeftLightValue,...
                  RightLight, RightLightValue...
                  CenterLight, CenterLightValue};
-switch TaskParameters.GUIMeta.EarlyWithdrawalFeedback.String{TaskParameters.GUI.EarlyWithdrawalFeedback}
-    case 'None'
-        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-            WaitSInAction = [WaitSInAction, CInEndOpto];
-        end % end if
-
-    case 'WhiteNoise'
-        if isfield(BpodSystem.ModuleUSB, 'HiFi1') % prioritize HiFi for sound
-            WaitSInAction = [WaitSInAction, {'HiFi1', ['P' 1]}];
-
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                WaitSInAction = [WaitSInAction, CInEndOpto];
-            end
-        elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-            WaitSInAction = [WaitSInAction, CInEndOptoWhiteNoise];
-        elseif BpodSystem.EmulatorMode
-            disp('BpodSystem is in EmulatorMode. No EarlyWithdrawal WhiteNoise will be played.');
-        else
-            disp('Neither HiFi nor analog module is setup. No EarlyWithdrawal WhiteNoise will be played.');
-        end
-        
-end
+WaitSInAction = [WaitSInAction, CInEndOpto];
 sma = AddState(sma,...
                'Name', 'WaitSIn',...
                'Timer', TaskParameters.GUI.ChoiceDeadline,...
@@ -635,19 +411,16 @@ sma = AddState(sma,...
 NoDecisionAction = {};
 switch TaskParameters.GUIMeta.NoDecisionFeedback.String{TaskParameters.GUI.NoDecisionFeedback}
     case 'None'
-        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-            NoDecisionAction = [NoDecisionAction, CInEndOpto];
-        end % end if
-
+        NoDecisionAction = [NoDecisionAction, CInEndOpto];
+        
     case 'WhiteNoise'
         if isfield(BpodSystem.ModuleUSB, 'HiFi1')
             NoDecisionAction = [NoDecisionAction, {'HiFi1', ['P' 2]}];
-            
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                NoDecisionAction = [NoDecisionAction, CInEndOpto];
-            end
+            NoDecisionAction = [NoDecisionAction, CInEndOpto];
+
         elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
             NoDecisionAction = [NoDecisionAction, CInEndOptoWhiteNoise];
+
         elseif BpodSystem.EmulatorMode
             disp('BpodSystem is in EmulatorMode. No NoDecision WhiteNoise will be played.');
         else
@@ -706,75 +479,31 @@ sma = AddState(sma,...
 %% SInOpto
 SInOpto = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
-    if TrialData.SInCh3Phasic(iTrial)
-        if TrialData.SInCh4Phasic(iTrial)
-            SInOpto = {'WavePlayer1', ['P' 28]}; % phasic ch3, phasic ch4
-        elseif TrialData.SInCh4Tonic(iTrial)
-            if TaskParameters.GUI.Ch4RepeatedTonicTrigger ||...
-               strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'Stop') ||...
-               strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'None') &&...
-               ~TrialData.CInCh4Tonic(iTrial)
-                SInOpto = {'WavePlayer1', ['P' 27]}; % phasic ch3, tonic ch4
-            else
-                SInOpto = {'WavePlayer1', ['P' 25]}; % phasic ch3, no stop ch4
-            end
-        else
-            SInOpto = {'WavePlayer1', ['P' 26]}; % phasic ch3, hard stop ch4
-        end
-    elseif TrialData.SInCh3Tonic(iTrial)
-        if TaskParameters.GUI.Ch3RepeatedTonicTrigger ||...
-           strcmpi(TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End}, 'Stop') ||...
-           strcmpi(TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End}, 'None') &&...
-           ~TrialData.CInCh4Tonic(iTrial)
-            if TrialData.SInCh4Phasic(iTrial)
-                SInOpto = {'WavePlayer1', ['P' 24]}; % tonic ch3, phasic ch4
-            elseif TrialData.SInCh4Tonic(iTrial)
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger ||...
-                   strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'Stop') ||...
-                   strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'None') &&...
-                   ~TrialData.CInCh4Tonic(iTrial)
-                    SInOpto = {'WavePlayer1', ['P' 23]}; % tonic ch3, tonic ch4
-                else
-                    SInOpto = {'WavePlayer1', ['P' 21]}; % tonic ch3, no stop ch4
-                end
-            else
-                SInOpto = {'WavePlayer1', ['P' 22]}; % tonic ch3, hard stop ch4
-            end
-        else
-            if TrialData.SInCh4Phasic(iTrial)
-                SInOpto = {'WavePlayer1', ['P' 31]}; % no stop ch3, phasic ch4
-            elseif TrialData.SInCh4Tonic(iTrial)
-                if TaskParameters.GUI.Ch4RepeatedTonicTrigger ||...
-                   strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'Stop') ||...
-                   strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'None') &&...
-                   ~TrialData.CInCh4Tonic(iTrial)
-                    SInOpto = {'WavePlayer1', ['P' 29]}; % no stop ch3, tonic ch4
-                else
-                    % no stop ch3, no stop ch4, i.e. do nothing
-                end
-            else
-                SInOpto = {'WavePlayer1', ['P' 34]};  % no stop ch3, hard stop ch4
-            end
-        end
-    else
-        if TrialData.SInCh4Phasic(iTrial)
-            SInOpto = {'WavePlayer1', ['P' 32]}; % hard stop ch3, phasic ch4
-        elseif TrialData.SInCh4Tonic(iTrial)
-            if TaskParameters.GUI.Ch4RepeatedTonicTrigger ||...
-               strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'Stop') ||...
-               strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'None') &&...
-               ~TrialData.CInCh4Tonic(iTrial)
-                SInOpto = {'WavePlayer1', ['P' 30]}; % hard stop ch3, tonic ch4
-            else
-                SInOpto = {'WavePlayer1', ['P' 33]}; % hard stop ch3, no stop ch4
-            end
-        else
-            SInOpto = {'WavePlayer1', ['P' 20]}; % hard stop ch3, hard stop ch4
-        end
+    SInCh3Train = TaskParameters.GUIMeta.SInCh3Train.String{TaskParameters.GUI.SInCh3Train};
+    SInCh3Key = SInCh3Train;
+    if ~TrialData.SInCh3Trigger(iTrial)
+        SInCh3Key = 'None';
     end
+
+    if strcmpi(SInCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(CInCh3End, 'Tonic')
+        SInCh3Key = 'None';
+    end
+    
+
+    SInCh4Train = TaskParameters.GUIMeta.SInCh4Train.String{TaskParameters.GUI.SInCh4Train};
+    SInCh4Key = SInCh4Train;
+    if ~TrialData.SInCh4Trigger(iTrial)
+        SInCh4Key = 'None';
+    end
+
+    if strcmpi(SInCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(CInCh4End, 'Tonic')
+        SInCh4Key = 'None';
+    end
+
+    SInOpto = {'WavePlayer1', ['P', OptoTable{SInCh3Key, SInCh4Key}]};
 end
 
-%% LIn
+%% FeedbackDelay
 FeedbackDelayLeft = TrialData.FeedbackDelay(iTrial);
 FeedbackDelayRight = TrialData.FeedbackDelay(iTrial);
 if TaskParameters.GUI.CatchTrial
@@ -793,6 +522,11 @@ if TaskParameters.GUI.CatchTrial
     end
 end
 
+%% StartLIn
+%{
+dev note: again, this is where SInCh3Train and SInCh4Train should start.
+But it is cleaner to do it in the next state
+%}
 sma = SetGlobalTimer(sma, 3, FeedbackDelayLeft); % used to track side poke grace period
 
 LInStateChange = 'WaterL';
@@ -802,33 +536,37 @@ end
 if TrialData.LightLeft(iTrial) == false % Incorrect Choice overwrite Baited 
     LInStateChange = 'IncorrectChoice';
 end
-sma = AddState(sma, 'Name', 'StartLIn',... % dummy state for trigger GlobalTimer3
-    'Timer', 0,...
-    'StateChangeConditions', {'Tup', 'LIn',...
-                              'GlobalTimer3_End', LInStateChange},...
-    'OutputActions',{'GlobalTimerTrig', 3, LeftLight, LeftLightValue});
+sma = AddState(sma,...
+               'Name', 'StartLIn',... % dummy state for trigger GlobalTimer3
+               'Timer', 0,...
+               'StateChangeConditions', {'Tup', 'LIn',...
+                                         'GlobalTimer3_End', LInStateChange},...
+               'OutputActions',{'GlobalTimerTrig', 3,...
+                                LeftLight, LeftLightValue});
 
-sma = AddState(sma, 'Name', 'LIn',...
-    'Timer', FeedbackDelayLeft,...
-    'StateChangeConditions', {'Tup', LInStateChange,...
-                              'GlobalTimer3_End', LInStateChange,...
-                              LeftPortOut,'LInGrace'},...
-    'OutputActions', {LeftLight, LeftLightValue});
+%% LIn
+LInAction = {LeftLight, LeftLightValue};
+LInAction = [LInAction, SInOpto];
+sma = AddState(sma,...
+               'Name', 'LIn',...
+               'Timer', FeedbackDelayLeft,...
+               'StateChangeConditions', {'Tup', LInStateChange,...
+                                         'GlobalTimer3_End', LInStateChange,...
+                                         LeftPortOut,'LInGrace'},...
+               'OutputActions', LInAction);
 
-sma = AddState(sma, 'Name', 'WaterL',...
-    'Timer', LeftValveTime,...
-    'StateChangeConditions', {'Tup', 'Drinking'},...
-    'OutputActions', {'ValveState', LeftValve});
+%% LInGrace
+sma = AddState(sma,...
+               'Name', 'LInGrace',...
+               'Timer', TaskParameters.GUI.FeedbackDelayGrace,...
+               'StateChangeConditions', {LeftPortIn, 'LIn',...
+                                         'Tup', 'SkippedFeedback',...
+                                         'GlobalTimer3_End', 'SkippedFeedback',...
+                                         CenterPortIn, 'SkippedFeedback',...
+                                         RightPortIn, 'SkippedFeedback'},...
+               'OutputActions', {LeftLight, LeftLightValue});
 
-sma = AddState(sma, 'Name', 'LInGrace',...
-    'Timer', TaskParameters.GUI.FeedbackDelayGrace,...
-    'StateChangeConditions', {LeftPortIn, 'LIn',...
-                              'Tup', 'SkippedFeedback',...
-                              'GlobalTimer3_End', 'SkippedFeedback',...
-                              CenterPortIn, 'SkippedFeedback',...
-                              RightPortIn, 'SkippedFeedback'},...
-    'OutputActions', {LeftLight, LeftLightValue});
-
+%% StartRIn
 sma = SetGlobalTimer(sma, 4, FeedbackDelayRight); % used to track side poke grace period
 
 RInStateChange = 'WaterR';
@@ -838,42 +576,72 @@ end
 if TrialData.LightLeft(iTrial) == true % Incorrect Choice overwrite Baited 
     RInStateChange = 'IncorrectChoice';
 end
-sma = AddState(sma, 'Name', 'StartRIn',... % dummy state for trigger GlobalTimer3
-    'Timer', 0,...
-    'StateChangeConditions', {'Tup', 'RIn',...
-                              'GlobalTimer4_End', RInStateChange},...
-    'OutputActions',{'GlobalTimerTrig', 4, RightLight, RightLightValue});
+sma = AddState(sma,...
+               'Name', 'StartRIn',... % dummy state for trigger GlobalTimer3
+               'Timer', 0,...
+               'StateChangeConditions', {'Tup', 'RIn',...
+                                         'GlobalTimer4_End', RInStateChange},...
+               'OutputActions',{'GlobalTimerTrig', 4,...
+                                 RightLight, RightLightValue});
 
-sma = AddState(sma, 'Name', 'RIn',...
-    'Timer', FeedbackDelayRight,...
-    'StateChangeConditions', {'Tup', RInStateChange,...
-                              'GlobalTimer4_End', RInStateChange,...
-                              RightPortOut,'RInGrace'},...
-    'OutputActions', {RightLight, RightLightValue});
+%% RIn
+RInAction = {RightLight, RightLightValue};
+RInAction = [RInAction, SInOpto];
+sma = AddState(sma,...
+               'Name', 'RIn',...
+               'Timer', FeedbackDelayRight,...
+               'StateChangeConditions', {'Tup', RInStateChange,...
+                                         'GlobalTimer4_End', RInStateChange,...
+                                         RightPortOut,'RInGrace'},...
+               'OutputActions', RInAction);
 
-sma = AddState(sma, 'Name', 'WaterR',...
-    'Timer', RightValveTime,...
-    'StateChangeConditions', {'Tup', 'Drinking'},...
-    'OutputActions', {'ValveState', RightValve});
+%% RInGrace
+sma = AddState(sma,...
+               'Name', 'RInGrace',...
+               'Timer', TaskParameters.GUI.FeedbackDelayGrace,...
+               'StateChangeConditions', {RightPortIn, 'RIn',...
+                                         'Tup', 'SkippedFeedback',...
+                                         'GlobalTimer4_End', 'SkippedFeedback',...
+                                         CenterPortIn, 'SkippedFeedback',...
+                                         LeftPortIn, 'SkippedFeedback'},...
+               'OutputActions', {RightLight, RightLightValue});
 
-sma = AddState(sma, 'Name', 'RInGrace',...
-    'Timer', TaskParameters.GUI.FeedbackDelayGrace,...
-    'StateChangeConditions', {RightPortIn, 'RIn',...
-                              'Tup', 'SkippedFeedback',...
-                              'GlobalTimer4_End', 'SkippedFeedback',...
-                              CenterPortIn, 'SkippedFeedback',...
-                              LeftPortIn, 'SkippedFeedback'},...
-    'OutputActions', {RightLight, RightLightValue});
+%% SInOptoEnd (for IncorrectChoice and NotBaited)
+SInEndOpto = {};
+SInEndOptoWhiteNoise = {};
+SInEndOpto500Hz = {};
+if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
+    SInCh3End = TaskParameters.GUIMeta.SInCh3End.String{TaskParameters.GUI.SInCh3End};
+    SInCh3EndKey = SInCh3End;
+    if strcmpi(SInCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SInCh3Train, 'Tonic')
+        SInCh3EndKey = 'None';
+    end
 
+    SInCh4End = TaskParameters.GUIMeta.SInCh4End.String{TaskParameters.GUI.SInCh4End};
+    SInCh4EndKey = SInCh4End;
+    if strcmpi(SInCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SInCh4Train, 'Tonic')
+        SInCh4EndKey = 'None';
+    end
+
+    SInEndOpto = {'WavePlaye1', ['P', OptoTable{SInCh3EndKey, SInCh4EndKey}]};
+    SInEndOptoWhiteNoise = {'WavePlaye1', ['P', OptoWhiteNoiseTable{SInCh3EndKey, SInCh4EndKey}]};
+    SInEndOpto500Hz = {'WavePlaye1', ['P', Opto500HzTable{SInCh3EndKey, SInCh4EndKey}]};
+end
+
+%% IncorrectChoice
 IncorrectChoiceAction = {};
 switch TaskParameters.GUIMeta.IncorrectChoiceFeedback.String{TaskParameters.GUI.IncorrectChoiceFeedback}
-    case 'None' % no adjustmnet needed
-        
+    case 'None'
+        IncorrectChoiceAction = [IncorrectChoiceAction, SInEndOpto];
+
     case 'WhiteNoise'
         if isfield(BpodSystem.ModuleUSB, 'HiFi1')
-            IncorrectChoiceAction = {'HiFi1', ['P' 4]};
+            IncorrectChoiceAction = [IncorrectChoiceAction, {'HiFi1', ['P' 4]}];
+            IncorrectChoiceAction = [IncorrectChoiceAction, SInEndOpto];
+            
         elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-            IncorrectChoiceAction = {'WavePlayer1', ['P' 4]};
+            IncorrectChoiceAction = [IncorrectChoiceAction, SInEndOptoWhiteNoise];
+
         elseif BpodSystem.EmulatorMode
             disp('BpodSystem is in EmulatorMode. No IncorrecChoice WhiteNoise will be played.');
         else
@@ -881,11 +649,140 @@ switch TaskParameters.GUIMeta.IncorrectChoiceFeedback.String{TaskParameters.GUI.
         end
         
 end
-sma = AddState(sma, 'Name', 'IncorrectChoice',...
-    'Timer', TaskParameters.GUI.IncorrectChoiceTimeOut,...
-    'StateChangeConditions', {'Tup', 'ITI'},...
-    'OutputActions', IncorrectChoiceAction);
+sma = AddState(sma,...
+               'Name', 'IncorrectChoice',...
+               'Timer', TaskParameters.GUI.IncorrectChoiceTimeOut,...
+               'StateChangeConditions', {'Tup', 'ITI'},...
+               'OutputActions', IncorrectChoiceAction);
 
+%% NotBaited
+NotBaitedAction = {};
+switch TaskParameters.GUIMeta.NotBaitedFeedback.String{TaskParameters.GUI.NotBaitedFeedback}
+    case 'None'
+        NotBaitedAction = [NotBaitedAction, SInEndOpto];
+        
+    case 'WhiteNoise'
+        if isfield(BpodSystem.ModuleUSB, 'HiFi1')
+            NotBaitedAction = [NotBaitedAction, {'HiFi1', ['P' 6]}];
+            NotBaitedAction = [NotBaitedAction, SInEndOpto];
+            
+        elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            NotBaitedAction = [NotBaitedAction, SInEndOptoWhiteNoise];
+        elseif BpodSystem.EmulatorMode
+            disp('BpodSystem is in EmulatorMode. No NotBaited WhiteNoise will be played.');
+        else
+            disp('Neither HiFi nor analog module is setup. No NotBaited WhiteNoise will be played.');
+        end
+        
+    case 'Beep'
+        if isfield(BpodSystem.ModuleUSB, 'HiFi1')
+            NotBaitedAction = [NotBaitedAction, {'HiFi1', ['P' 6]}];
+            NotBaitedAction = [NotBaitedAction, SInEndOpto];
+            
+        elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            NotBaitedAction = [NotBaitedAction, SInEndOpto500Hz];
+
+        elseif BpodSystem.EmulatorMode
+            disp('BpodSystem is in EmulatorMode. No NotBaited Beep will be played.');
+        else
+            disp('Neither HiFi nor analog module is setup. No NotBaited Beep will be played.');
+        end
+        
+end
+sma = AddState(sma,...
+               'Name', 'NotBaited',...
+               'Timer', TaskParameters.GUI.NotBaitedTimeOut,...
+               'StateChangeConditions', {'Tup', 'ITI'},...
+               'OutputActions', NotBaitedAction);
+
+%% WaterSOpto
+WaterSOpto = {};
+if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
+    WaterSCh3Train = TaskParameters.GUIMeta.WaterSCh3Train.String{TaskParameters.GUI.WaterSCh3Train};
+    WaterSCh3Key = WaterSCh3Train;
+    if ~TrialData.WaterSCh3Trigger(iTrial)
+        WaterSCh3Key = 'None';
+    end
+
+    if strcmpi(WaterSCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+        WaterSCh3Key = 'None';
+    end
+    
+
+    WaterSCh4Train = TaskParameters.GUIMeta.WaterSCh4Train.String{TaskParameters.GUI.WaterSCh4Train};
+    WaterSCh4Key = WaterSCh4Train;
+    if ~TrialData.WaterSCh4Trigger(iTrial)
+        WaterSCh4Key = 'None';
+    end
+
+    if strcmpi(WaterSCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+        WaterSCh4Key = 'None';
+    end
+
+    WaterSOpto = {'WavePlayer1', ['P', OptoTable{WaterSCh3Key, WaterSCh4Key}]};
+end
+
+%% WaterL
+WaterLAction = {'ValveState', LeftValve};
+if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement) || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
+    WaterLAction = WaterSOpto;
+else
+    WaterLAction = [WaterLAction, WaterSOpto];
+end
+sma = AddState(sma,...
+               'Name', 'WaterL',...
+               'Timer', LeftValveTime,...
+               'StateChangeConditions', {'Tup', 'Drinking'},...
+               'OutputActions', WaterLAction);
+
+%% WaterR
+WaterRAction = {'ValveState', RightValve};
+if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement) || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
+    WaterRAction = WaterSOpto;
+else
+    WaterRAction = [WaterRAction, WaterSOpto];
+end
+sma = AddState(sma,...
+               'Name', 'WaterR',...
+               'Timer', RightValveTime,...
+               'StateChangeConditions', {'Tup', 'Drinking'},...
+               'OutputActions', WaterRAction);
+
+%% Drinking
+DrinkingAction = {};
+if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
+    WaterSCh3End = TaskParameters.GUIMeta.WaterSCh3End.String{TaskParameters.GUI.WaterSCh3End};
+    WaterSCh3EndKey = WaterSCh3End;
+    if strcmpi(WaterSCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(WaterSCh3Train, 'Tonic')
+        WaterSCh3EndKey = 'None';
+    end
+
+    WaterSCh4End = TaskParameters.GUIMeta.WaterSCh4End.String{TaskParameters.GUI.WaterSCh4End};
+    WaterSCh4EndKey = WaterSCh4End;
+    if strcmpi(WaterSCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(WaterSCh4Train, 'Tonic')
+        WaterSCh4EndKey = 'None';
+    end
+
+    DrinkingAction = {'WavePlaye1', ['P', OptoTable{WaterSCh3EndKey, WaterSCh4EndKey}]};
+end
+sma = AddState(sma,...
+               'Name', 'Drinking',... % serve as time buffer before next trial start
+               'Timer', 0,...
+               'StateChangeConditions', {LeftPortOut, 'DrinkingGrace',...
+                                         RightPortOut, 'DrinkingGrace'},...
+               'OutputActions', DrinkingAction);
+
+%% DrinkingGrace
+DrinkingGraceTimer = TaskParameters.GUI.DrinkingGraceTime;
+sma = AddState(sma,...
+               'Name', 'DrinkingGrace',... % serve as time buffer before next trial start
+               'Timer', DrinkingGraceTimer,...
+               'StateChangeConditions', {LeftPortIn, 'Drinking',...
+                                         RightPortIn, 'Drinking',...
+                                         'Tup', 'ITI'},...
+               'OutputActions', {});
+
+%% SkippedFeedbackAction
 SkippedFeedbackAction = {};
 switch TaskParameters.GUIMeta.SkippedFeedbackFeedback.String{TaskParameters.GUI.SkippedFeedbackFeedback}
     case 'None' % no adjustmnet needed
@@ -915,55 +812,23 @@ switch TaskParameters.GUIMeta.SkippedFeedbackFeedback.String{TaskParameters.GUI.
 end
 sma = AddState(sma, 'Name', 'SkippedFeedback',...
     'Timer', TaskParameters.GUI.SkippedFeedbackTimeOut,...
-    'StateChangeConditions', {'Tup', 'ITI'},...
+    'StateChangeConditions', {'Tup', 'EndSkippedFeedback'},...
     'OutputActions', SkippedFeedbackAction);
 
-NotBaitedAction = {};
-switch TaskParameters.GUIMeta.NotBaitedFeedback.String{TaskParameters.GUI.NotBaitedFeedback}
-    case 'None' % no adjustmnet needed
-        
-    case 'WhiteNoise'
-        if isfield(BpodSystem.ModuleUSB, 'HiFi1')
-            NotBaitedAction = {'HiFi1', ['P' 6]};
-        elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-            NotBaitedAction = {'WavePlayer1', ['P' 6]};
-        elseif BpodSystem.EmulatorMode
-            disp('BpodSystem is in EmulatorMode. No NotBaited WhiteNoise will be played.');
-        else
-            disp('Neither HiFi nor analog module is setup. No NotBaited WhiteNoise will be played.');
-        end
-        
-    case 'Beep'
-        if isfield(BpodSystem.ModuleUSB, 'HiFi1')
-            NotBaitedAction = {'HiFi1', ['P' 6]};
-        elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-            NotBaitedAction = {'WavePlayer1', ['P' 6]};
-        elseif BpodSystem.EmulatorMode
-            disp('BpodSystem is in EmulatorMode. No NotBaited Beep will be played.');
-        else
-            disp('Neither HiFi nor analog module is setup. No NotBaited Beep will be played.');
-        end
-        
-end
-sma = AddState(sma, 'Name', 'NotBaited',...
-    'Timer', TaskParameters.GUI.NotBaitedTimeOut,...
+
+%% EndSkippedFeedback
+% dummy state for SkippedFeedbackCh3End/Ch4End
+%{
+SkippedFeedback CANNOT followed by ITI or it SkippedFeedbackCh3End/Ch4End will directly change ITI
+(and thus the EventXCh3End will not be carried over)
+%}
+EndSkippedFeedbackAction = {};
+sma = AddState(sma, 'Name', 'EndSkippedFeedback',...
+    'Timer', 0.1,...
     'StateChangeConditions', {'Tup', 'ITI'},...
-    'OutputActions', NotBaitedAction);
+    'OutputActions', EndSkippedFeedbackAction);
 
-sma = AddState(sma, 'Name', 'Drinking',... % serve as time buffer before next trial start
-    'Timer', 0,...
-    'StateChangeConditions', {LeftPortOut, 'DrinkingGrace',...
-                              RightPortOut, 'DrinkingGrace'},...
-    'OutputActions', {});
-
-DrinkingGraceTimer = TaskParameters.GUI.DrinkingGraceTime;
-sma = AddState(sma, 'Name', 'DrinkingGrace',... % serve as time buffer before next trial start
-    'Timer', DrinkingGraceTimer,...
-    'StateChangeConditions', {LeftPortIn, 'Drinking',...
-                              RightPortIn, 'Drinking',...
-                              'Tup', 'ITI'},...
-    'OutputActions', {});
-
+%% ITI
 ITITimer = TaskParameters.GUI.ITI;
 if TaskParameters.GUI.VI
     ITITimer = min([exprnd(TaskParameters.GUI.ITI), TaskParameters.GUI.ITI * 5]); % exp(-5) = 0.0067
@@ -974,9 +839,10 @@ switch TaskParameters.GUIMeta.RiskType.String{TaskParameters.GUI.RiskType}
             ITITimer = TaskParameters.GUI.ITI * 1.5;
         end
 end
-sma = AddState(sma, 'Name', 'ITI',...
-    'Timer', ITITimer,...
-    'StateChangeConditions',{'Tup', 'exit'},...
-    'OutputActions',{});
+sma = AddState(sma,...
+               'Name', 'ITI',...
+               'Timer', ITITimer,...
+               'StateChangeConditions',{'Tup', 'exit'},...
+               'OutputActions',{});
 
 end % StateMatrix

@@ -6,9 +6,9 @@ function TwoArmBanditVariant_LoadWaveform(Player, Mode, iTrial)
 % IncorrectChoiceSound -> 5
 % SkippedFeedbackSound -> 6
 % NotBaiedSFeedbackSound -> 7}
-% Sound Index 8 onwards are reserved for trial-dependent waveform (Max index for HiFi: 20; for Analog: 64)
-% Sound Index/profile 11 onwards are for optogenetics waveform (only for AOM)
-% Sound Index 20/64 is hard stop, i.e. no playback
+% Sound/profile Index 8-10 are reserved for trial-dependent waveform (Max index for HiFi: 20; for Analog: 64)
+% Sound/profile Index 11 onwards are for optogenetics waveform (only for AOM)
+% Sound Index 20/64 should be none, i.e. no action
 
 global BpodSystem
 global TaskParameters
@@ -339,7 +339,7 @@ switch Mode
         end
 
         % tonic
-        SoundIndex = 21;
+        SoundIndex = 11;
         TonicTrain = [];
         
         Voltage = TaskParameters.GUI.Ch3TonicVoltage;
@@ -362,7 +362,7 @@ switch Mode
         end
         
         % phasic
-        SoundIndex = 22;
+        SoundIndex = 12;
         PhasicTrain = [];
         
         Voltage = TaskParameters.GUI.Ch3PhasicVoltage;
@@ -386,7 +386,7 @@ switch Mode
         end
 
         % tonic
-        SoundIndex = 23;
+        SoundIndex = 13;
         TonicTrain = [];
         
         Voltage = TaskParameters.GUI.Ch4TonicVoltage;
@@ -409,7 +409,7 @@ switch Mode
         end
         
         % phasic
-        SoundIndex = 24;
+        SoundIndex = 14;
         PhasicTrain = [];
         
         Voltage = TaskParameters.GUI.Ch4PhasicVoltage;
@@ -431,7 +431,7 @@ switch Mode
         % usually when opto (final setting), no white noise is used in
         % BrokeFixation, EarlyWithdrawl, IncorrectChoice. Even if so, 0.5s
         % is enough to signal error (e.g. Cued + Early Withdrawl)
-        SoundIndex = 25;
+        SoundIndex = 15;
         OptoWhiteNoise = rand(1, fs * 0.5) * 2 - 1;
 
         if ~isempty(OptoWhiteNoise)
@@ -442,7 +442,7 @@ switch Mode
         
         % opto-0.5kHz
         % usually for NotBaited Feedback (in non-final settings). 0.1s is the usualy setting 
-        SoundIndex = 26;
+        SoundIndex = 16;
         OptoNotBaitedSound = GenerateRiskCue(fs, 0.1, 'Freq', 0.5, 0.5);
         
         if ~isempty(OptoNotBaitedSound)
@@ -453,7 +453,7 @@ switch Mode
         
         % opto-1kHz
         % usually for SkippedFeedback (in final settings, and StartNewTrialSound). 0.1s is the usualy setting 
-        SoundIndex = 27;
+        SoundIndex = 17;
         OptoSkippedFeedbackSound = GenerateRiskCue(fs, 0.1, 'Freq', 1, 1);
 
         if ~isempty(OptoSkippedFeedbackSound)
@@ -464,51 +464,32 @@ switch Mode
         
         %% trigger profile
         % only opto
-        Player.TriggerProfiles(21:35, 3:4) = [64, 64; % 21: hard stop on ch3 & ch4
-                                              21,  0; % 22: only ch3 tonic, no stop in ch4
-                                              21, 64; % 23: only ch3 tonic, hard stop in ch4
-                                              21, 23; % 24: ch3 tonic, ch4 tonic
-                                              21, 24; % 25: ch3 tonic, ch4 phasic
-                                              22,  0; % 26: only ch3 phasic, no stop in ch4
-                                              22, 64; % 27: only ch3 phasic, hard stop in ch4
-                                              22, 23; % 28: ch3 phasic, ch4 tonic
-                                              22, 24; % 29: ch3 phasic, ch4 phasic
-                                               0, 23; % 30: no stop in ch3, tonic in ch4
-                                              64, 23; % 31: hard stop in ch3, tonic in ch4
-                                               0, 24; % 32: no stop in ch3, phasic in ch4
-                                              64, 24; % 33: hard stop in ch3, phasic in ch4
-                                              64,  0; % 34: hard stop in ch3, no stop in ch4
-                                               0, 64];% 35: no stop in ch3, hard stop in ch4
-        
+        x = [0, 64, 11, 12];
+        y = [0, 64, 13, 14];
+        [X, Y] = meshgrid(x, y);
+        x = reshape(X, 1, []);
+        y = reshape(Y, 1, []);
+
+        Player.TriggerProfiles(11:25, 3) = x(2:end);
+        Player.TriggerProfiles(11:25, 4) = y(2:end);
+                                              
         % opto + white noise
-        Player.TriggerProfiles(36:43, 1:4) = [25, 25, 64, 64; % 36: hard stop on ch3 & ch4
-                                              25, 25, 21,  0; % 37: only ch3 tonic, no stop in ch4
-                                              25, 25, 21, 64; % 38: only ch3 tonic, hard stop in ch4
-                                              25, 25, 21, 23; % 39: ch3 tonic, ch4 tonic
-                                              25, 25,  0, 23; % 40: no stop in ch3, tonic in ch4
-                                              25, 25, 64, 23; % 41: hard stop in ch3, tonic in ch4
-                                              25, 25, 64,  0; % 42: hard stop in ch3, no stop in ch4
-                                              25, 25,  0, 64];% 43: no stop in ch3, hard stop in ch4
+        x = reshape(X(1:3, 1:3), 1, []);
+        y = reshape(Y(1:3, 1:3), 1, []);
+
+        Player.TriggerProfiles(26:33, 1:2) = 15;
+        Player.TriggerProfiles(26:33, 3) = x(2:end);
+        Player.TriggerProfiles(26:33, 4) = y(2:end);
         
-        % opto + 0.5kHz
-        Player.TriggerProfiles(44:51, 1:4) = [26, 26, 64, 64; % 44: hard stop on ch3 & ch4
-                                              26, 26, 21,  0; % 45: only ch3 tonic, no stop in ch4
-                                              26, 26, 21, 64; % 46: only ch3 tonic, hard stop in ch4
-                                              26, 26, 21, 23; % 47: ch3 tonic, ch4 tonic
-                                              26, 26,  0, 23; % 48: no stop in ch3, tonic in ch4
-                                              26, 26, 64, 23; % 49: hard stop in ch3, tonic in ch4
-                                              26, 26, 64,  0; % 50: hard stop in ch3, no stop in ch4
-                                              26, 26,  0, 64];% 51: no stop in ch3, hard stop in ch4
+        % opto + 0.5kHz (only fore NotBaited)
+        Player.TriggerProfiles(34:41, 1:2) = 16;
+        Player.TriggerProfiles(34:41, 3) = x(2:end);
+        Player.TriggerProfiles(34:41, 4) = y(2:end);
         
-        % opto + 1kHz
-        Player.TriggerProfiles(44:51, 1:4) = [27, 27, 64, 64; % 44: hard stop on ch3 & ch4
-                                              27, 27, 21,  0; % 45: only ch3 tonic, no stop in ch4
-                                              27, 27, 21, 64; % 46: only ch3 tonic, hard stop in ch4
-                                              27, 27, 21, 23; % 47: ch3 tonic, ch4 tonic
-                                              27, 27,  0, 23; % 48: no stop in ch3, tonic in ch4
-                                              27, 27, 64, 23; % 49: hard stop in ch3, tonic in ch4
-                                              27, 27, 64,  0; % 50: hard stop in ch3, no stop in ch4
-                                              27, 27,  0, 64];% 51: no stop in ch3, hard stop in ch4
+        % opto + 1kHz (only for SkippedFeedback)
+        Player.TriggerProfiles(42:56, 1:2) = 17;
+        Player.TriggerProfiles(42:56, 3) = x(2:end);
+        Player.TriggerProfiles(42:56, 4) = y(2:end);
         
 end % switch
 end % function
