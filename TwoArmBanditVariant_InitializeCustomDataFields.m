@@ -777,13 +777,11 @@ if TaskParameters.GUI.WaitCInCh4Percentage > (rand * 100)
             TrialData.WaitCInCh4Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockTrialNumberKey = strcat('Ch4', Ch4Key, 'BlockTrialNumberKey');
-            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMaxKey');
-            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMinKey');
-            NextBlockTrialNumberKey = strcat('Ch4', Ch4Key, 'NextBlockTrialNumber');
+            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
 
-            if TrialData.(BlockTrialNumberKey)(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.(NextBlockTrialNumberKey) + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
+               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
                 TrialData.WaitCInCh4Trigger(iTrial) = true;
             end
 
