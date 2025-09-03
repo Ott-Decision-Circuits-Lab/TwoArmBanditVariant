@@ -181,7 +181,7 @@ switch Mode
         end
         
         %%
-        HardStop = [];
+        HardStop = 0;
         if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
             Player.loadWaveform(64, HardStop);
         elseif isfield(BpodSystem.ModuleUSB, 'HiFi1')
@@ -333,7 +333,7 @@ switch Mode
 
     case 'Opto'
         %% Ch3
-        if TaskParameters.GUI.Ch3LoopedTonic == 1
+        if TaskParameters.GUI.Ch3Looped == 1
             Player.LoopDuration(3) = 20000; % 1hr = 3600s; 20000 > 5hr
             Player.LoopMode{3} = 'On';
         end
@@ -380,7 +380,7 @@ switch Mode
         end
 
         %% Ch4
-        if TaskParameters.GUI.Ch4LoopedTonic == 1
+        if TaskParameters.GUI.Ch4Looped == 1
             Player.LoopDuration(4) = 20000; % 1hr = 3600s; 20000 > 5hr
             Player.LoopMode{4} = 'On';
         end
@@ -474,17 +474,17 @@ switch Mode
         Player.TriggerProfiles(11:25, 4) = y(2:end);
                                               
         % opto + white noise
-        x = reshape(X(1:3, 1:3), 1, []);
-        y = reshape(Y(1:3, 1:3), 1, []);
+        p = reshape(X(1:3, 1:3), 1, []);
+        q = reshape(Y(1:3, 1:3), 1, []);
 
         Player.TriggerProfiles(26:33, 1:2) = 15;
-        Player.TriggerProfiles(26:33, 3) = x(2:end);
-        Player.TriggerProfiles(26:33, 4) = y(2:end);
+        Player.TriggerProfiles(26:33, 3) = p(2:end);
+        Player.TriggerProfiles(26:33, 4) = q(2:end);
         
         % opto + 0.5kHz (only fore NotBaited)
         Player.TriggerProfiles(34:41, 1:2) = 16;
-        Player.TriggerProfiles(34:41, 3) = x(2:end);
-        Player.TriggerProfiles(34:41, 4) = y(2:end);
+        Player.TriggerProfiles(34:41, 3) = p(2:end);
+        Player.TriggerProfiles(34:41, 4) = q(2:end);
         
         % opto + 1kHz (only for SkippedFeedback)
         Player.TriggerProfiles(42:56, 1:2) = 17;

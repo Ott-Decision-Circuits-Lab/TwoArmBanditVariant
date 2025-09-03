@@ -141,7 +141,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
        && strcmpi(WaitCInCh4Train, 'Tonic')
         WaitCInCh4EndKey = 'None';
     end
-    NoTrialStartAction = [NoTrialStartAction, {'WavePlaye1', ['P', OptoTable{WaitCInCh3EndKey, WaitCInCh4EndKey}]}];
+    NoTrialStartAction = [NoTrialStartAction, {'WavePlayer1', ['P', OptoTable{WaitCInCh3EndKey, WaitCInCh4EndKey}]}];
 end
 sma = AddState(sma,...
                'Name', 'NoTrialStart',...
@@ -222,8 +222,8 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         CInCh4EndKey = 'None';
     end
 
-    CInEndOpto = {'WavePlaye1', ['P', OptoTable{CInCh3EndKey, CInCh4EndKey}]};
-    CInEndOptoWhiteNoise = {'WavePlaye1', ['P', OptoWhiteNoiseTable{CInCh3EndKey, CInCh4EndKey}]};
+    CInEndOpto = {'WavePlayer1', ['P', OptoTable{CInCh3EndKey, CInCh4EndKey}]};
+    CInEndOptoWhiteNoise = {'WavePlayer1', ['P', OptoWhiteNoiseTable{CInCh3EndKey, CInCh4EndKey}]};
 end
 
 %% BrokeFixation
@@ -649,9 +649,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SInCh4EndKey = 'None';
     end
 
-    SInEndOpto = {'WavePlaye1', ['P', OptoTable{SInCh3EndKey, SInCh4EndKey}]};
-    SInEndOptoWhiteNoise = {'WavePlaye1', ['P', OptoWhiteNoiseTable{SInCh3EndKey, SInCh4EndKey}]};
-    SInEndOpto500Hz = {'WavePlaye1', ['P', Opto500HzTable{SInCh3EndKey, SInCh4EndKey}]};
+    SInEndOpto = {'WavePlayer1', ['P', OptoTable{SInCh3EndKey, SInCh4EndKey}]};
+    SInEndOptoWhiteNoise = {'WavePlayer1', ['P', OptoWhiteNoiseTable{SInCh3EndKey, SInCh4EndKey}]};
+    SInEndOpto500Hz = {'WavePlayer1', ['P', Opto500HzTable{SInCh3EndKey, SInCh4EndKey}]};
 end
 
 %% IncorrectChoice
@@ -799,7 +799,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaterSCh4EndKey = 'None';
     end
 
-    DrinkingAction = {'WavePlaye1', ['P', OptoTable{WaterSCh3EndKey, WaterSCh4EndKey}]};
+    DrinkingAction = {'WavePlayer1', ['P', OptoTable{WaterSCh3EndKey, WaterSCh4EndKey}]};
 end
 sma = AddState(sma,...
                'Name', 'Drinking',... % serve as time buffer before next trial start
@@ -900,7 +900,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SkippedFeedbackCh4EndKey = 'None';
     end
 
-    EndSkippedFeedbackAction = {'WavePlaye1', ['P', OptoTable{SkippedFeedbackCh3EndKey, SkippedFeedbackCh4EndKey}]};
+    EndSkippedFeedbackAction = {'WavePlayer1', ['P', OptoTable{SkippedFeedbackCh3EndKey, SkippedFeedbackCh4EndKey}]};
 end
 sma = AddState(sma,...
                'Name', 'EndSkippedFeedback',...
