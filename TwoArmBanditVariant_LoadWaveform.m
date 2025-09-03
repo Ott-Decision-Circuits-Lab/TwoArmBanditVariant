@@ -5,7 +5,7 @@ function TwoArmBanditVariant_LoadWaveform(Player, Mode, iTrial)
 % StartNewTrialSound   -> 4
 % IncorrectChoiceSound -> 5
 % SkippedFeedbackSound -> 6
-% NotBaiedSFeedbackSound -> 7}
+% NotBaitedFeedbackSound -> 7}
 % Sound/profile Index 8-10 are reserved for trial-dependent waveform (Max index for HiFi: 20; for Analog: 64)
 % Sound/profile Index 11 onwards are for optogenetics waveform (only for AOM)
 % Sound Index 20/64 should be none, i.e. no action

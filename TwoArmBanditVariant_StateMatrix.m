@@ -37,7 +37,7 @@ OptoTable = table('Size', [4, 4],...
                   'RowNames', {'None', 'Stop', 'Tonic', 'Phasic'},...
                   'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
 
-OptoTable(:, :) = num2cell(reshape([63, 10:24], 4, 4)');
+OptoTable(:, :) = num2cell(reshape([63, 10:24], 4, 4)'); % Profile Index 64: reserved for no playback, i.e. 'None' on all channels
 
 OptoWhiteNoiseTable = table('Size', [3, 3],...
                             'VariableTypes', {'double', 'double', 'double'},...
@@ -45,7 +45,7 @@ OptoWhiteNoiseTable = table('Size', [3, 3],...
                             'RowNames', {'None', 'Stop', 'Tonic'},...
                             'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
 
-OptoWhiteNoiseTable(:, :) = num2cell(reshape([63, 25:32], 3, 3)');
+OptoWhiteNoiseTable(:, :) = num2cell(reshape([2, 25:32], 3, 3)'); % Profile Index 3: NoDecision usually with WhiteNoise
 
 Opto500HzTable = table('Size', [3, 3],...
                         'VariableTypes', {'double', 'double', 'double'},...
@@ -53,7 +53,7 @@ Opto500HzTable = table('Size', [3, 3],...
                         'RowNames', {'None', 'Stop', 'Tonic'},...
                         'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
 
-Opto500HzTable(:, :) = num2cell(reshape([63, 33:40], 3, 3)');
+Opto500HzTable(:, :) = num2cell(reshape([6, 33:40], 3, 3)'); % Profile Index 7: NotBaited, only it will have 500Hz beep
 
 Opto1kHzTable = table('Size', [4, 4],...
                       'VariableTypes', {'double', 'double', 'double', 'double'},...
@@ -61,7 +61,7 @@ Opto1kHzTable = table('Size', [4, 4],...
                       'RowNames', {'None', 'Stop', 'Tonic', 'Phasic'},...
                       'DimensionNames', {'Ch3', 'Ch4'}); % row = ch3, column = ch4
 
-Opto1kHzTable(:, :) = num2cell(reshape([63, 41:55], 4, 4)');
+Opto1kHzTable(:, :) = num2cell(reshape([5, 41:55], 4, 4)');  % Profile Index 6: SkippedFeedback, it usually has 1kHz beep
 
 %% Set up state matrix    
 sma = NewStateMatrix();
@@ -86,7 +86,10 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaitCInCh3Key = 'None';
     end
 
-    if strcmpi(WaitCInCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && iTrial ~= 1 && TrialData.Ch3TonicCarriedForward(iTrial-1)
+    if strcmpi(WaitCInCh3Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && iTrial ~= 1 &&...
+       TrialData.Ch3TonicCarriedForward(iTrial-1)
         WaitCInCh3Key = 'None';
     end
     
@@ -97,7 +100,10 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaitCInCh4Key = 'None';
     end
 
-    if strcmpi(WaitCInCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && iTrial ~= 1 && TrialData.Ch4TonicCarriedForward(iTrial-1)
+    if strcmpi(WaitCInCh4Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && (iTrial ~= 1)...
+       && TrialData.Ch4TonicCarriedForward(iTrial-1)
         WaitCInCh4Key = 'None';
     end
 
@@ -122,13 +128,17 @@ NoTrialStartAction = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     WaitCInCh3End = TaskParameters.GUIMeta.WaitCInCh3End.String{TaskParameters.GUI.WaitCInCh3End};
     WaitCInCh3EndKey = WaitCInCh3End;
-    if strcmpi(WaitCInCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(WaitCInCh3Train, 'Tonic')
+    if strcmpi(WaitCInCh3End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(WaitCInCh3Train, 'Tonic')
         WaitCInCh3EndKey = 'None';
     end
 
     WaitCInCh4End = TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End};
     WaitCInCh4EndKey = WaitCInCh4End;
-    if strcmpi(WaitCInCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(WaitCInCh4Train, 'Tonic')
+    if strcmpi(WaitCInCh4End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(WaitCInCh4Train, 'Tonic')
         WaitCInCh4EndKey = 'None';
     end
     NoTrialStartAction = [NoTrialStartAction, {'WavePlaye1', ['P', OptoTable{WaitCInCh3EndKey, WaitCInCh4EndKey}]}];
@@ -163,7 +173,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         CInCh3Key = 'None';
     end
 
-    if strcmpi(CInCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(WaitCInCh3Train, 'Tonic')
+    if strcmpi(CInCh3Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(WaitCInCh3Train, 'Tonic')
         CInCh3Key = 'None';
     end
     
@@ -174,7 +186,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         CInCh4Key = 'None';
     end
 
-    if strcmpi(CInCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(WaitCInCh4Train, 'Tonic')
+    if strcmpi(CInCh4Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(WaitCInCh4Train, 'Tonic')
         CInCh4Key = 'None';
     end
 
@@ -194,13 +208,17 @@ CInEndOptoWhiteNoise = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     CInCh3End = TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End};
     CInCh3EndKey = CInCh3End;
-    if strcmpi(CInCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(CInCh3Train, 'Tonic')
+    if strcmpi(CInCh3End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(CInCh3Train, 'Tonic')
         CInCh3EndKey = 'None';
     end
 
     CInCh4End = TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End};
     CInCh4EndKey = CInCh4End;
-    if strcmpi(CInCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(CInCh4Train, 'Tonic')
+    if strcmpi(CInCh4End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(CInCh4Train, 'Tonic')
         CInCh4EndKey = 'None';
     end
 
@@ -485,7 +503,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SInCh3Key = 'None';
     end
 
-    if strcmpi(SInCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(CInCh3End, 'Tonic')
+    if strcmpi(SInCh3Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(CInCh3End, 'Tonic')
         SInCh3Key = 'None';
     end
     
@@ -496,7 +516,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SInCh4Key = 'None';
     end
 
-    if strcmpi(SInCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(CInCh4End, 'Tonic')
+    if strcmpi(SInCh4Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(CInCh4End, 'Tonic')
         SInCh4Key = 'None';
     end
 
@@ -613,13 +635,17 @@ SInEndOpto500Hz = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     SInCh3End = TaskParameters.GUIMeta.SInCh3End.String{TaskParameters.GUI.SInCh3End};
     SInCh3EndKey = SInCh3End;
-    if strcmpi(SInCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SInCh3Train, 'Tonic')
+    if strcmpi(SInCh3End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(SInCh3Train, 'Tonic')
         SInCh3EndKey = 'None';
     end
 
     SInCh4End = TaskParameters.GUIMeta.SInCh4End.String{TaskParameters.GUI.SInCh4End};
     SInCh4EndKey = SInCh4End;
-    if strcmpi(SInCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SInCh4Train, 'Tonic')
+    if strcmpi(SInCh4End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(SInCh4Train, 'Tonic')
         SInCh4EndKey = 'None';
     end
 
@@ -704,7 +730,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaterSCh3Key = 'None';
     end
 
-    if strcmpi(WaterSCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+    if strcmpi(WaterSCh3Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(SInCh3End, 'Tonic')
         WaterSCh3Key = 'None';
     end
     
@@ -715,7 +743,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaterSCh4Key = 'None';
     end
 
-    if strcmpi(WaterSCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+    if strcmpi(WaterSCh4Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(SInCh3End, 'Tonic')
         WaterSCh4Key = 'None';
     end
 
@@ -724,7 +754,8 @@ end
 
 %% WaterL
 WaterLAction = {'ValveState', LeftValve};
-if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement) || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
+if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement)...
+   || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
     WaterLAction = WaterSOpto;
 else
     WaterLAction = [WaterLAction, WaterSOpto];
@@ -737,7 +768,8 @@ sma = AddState(sma,...
 
 %% WaterR
 WaterRAction = {'ValveState', RightValve};
-if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement) || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
+if (TrialData.WaterSCh3Trigger && TaskParameters.GUI.Ch3RewardReplacement)...
+   || (TrialData.WaterSCh4Trigger && TaskParameters.GUI.Ch4RewardReplacement)
     WaterRAction = WaterSOpto;
 else
     WaterRAction = [WaterRAction, WaterSOpto];
@@ -753,13 +785,17 @@ DrinkingAction = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     WaterSCh3End = TaskParameters.GUIMeta.WaterSCh3End.String{TaskParameters.GUI.WaterSCh3End};
     WaterSCh3EndKey = WaterSCh3End;
-    if strcmpi(WaterSCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(WaterSCh3Train, 'Tonic')
+    if strcmpi(WaterSCh3End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(WaterSCh3Train, 'Tonic')
         WaterSCh3EndKey = 'None';
     end
 
     WaterSCh4End = TaskParameters.GUIMeta.WaterSCh4End.String{TaskParameters.GUI.WaterSCh4End};
     WaterSCh4EndKey = WaterSCh4End;
-    if strcmpi(WaterSCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(WaterSCh4Train, 'Tonic')
+    if strcmpi(WaterSCh4End, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(WaterSCh4Train, 'Tonic')
         WaterSCh4EndKey = 'None';
     end
 
@@ -782,16 +818,42 @@ sma = AddState(sma,...
                                          'Tup', 'ITI'},...
                'OutputActions', {});
 
-%% SkippedFeedbackAction
-SkippedFeedbackAction = {};
+%% SkippedFeedback
+SkippedFeedbackAction  = {};
+if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
+    SkippedFeedbackCh3Train = TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String{TaskParameters.GUI.SkippedFeedbackCh3Train};
+    SkippedFeedbackCh3Key = SkippedFeedbackCh3Train;
+    if ~TrialData.SkippedFeedbackCh3Trigger(iTrial)
+        SkippedFeedbackCh3Key = 'None';
+    end
+
+    if strcmpi(SkippedFeedbackCh3Key, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+        SkippedFeedbackCh3Key = 'None';
+    end
+    
+
+    SkippedFeedbackCh4Train = TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String{TaskParameters.GUI.SkippedFeedbackCh4Train};
+    SkippedFeedbackCh4Key = SkippedFeedbackCh4Train;
+    if ~TrialData.SkippedFeedbackCh4Trigger(iTrial)
+        SkippedFeedbackCh4Key = 'None';
+    end
+
+    if strcmpi(SkippedFeedbackCh4Key, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SInCh3End, 'Tonic')
+        SkippedFeedbackCh4Key = 'None';
+    end
+    
+end
 switch TaskParameters.GUIMeta.SkippedFeedbackFeedback.String{TaskParameters.GUI.SkippedFeedbackFeedback}
-    case 'None' % no adjustmnet needed
-        
+    case 'None'
+        SkippedFeedbackAction = [SkippedFeedbackAction, {'WavePlayer1', ['P', OptoTable{SkippedFeedbackCh3Key, SkippedFeedbackCh4Key}]}];
+
     case 'WhiteNoise'
         if isfield(BpodSystem.ModuleUSB, 'HiFi1')
             SkippedFeedbackAction = {'HiFi1', ['P' 5]};
+            SkippedFeedbackAction = [SkippedFeedbackAction, {'WavePlayer1', ['P', OptoTable{SkippedFeedbackCh3Key, SkippedFeedbackCh4Key}]}];
+
         elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-            SkippedFeedbackAction = {'WavePlayer1', ['P' 5]};
+            SkippedFeedbackAction = [SkippedFeedbackAction, {'WavePlayer1', ['P', OptoWhiteNoiseTable{SkippedFeedbackCh3Key, SkippedFeedbackCh4Key}]}];
         elseif BpodSystem.EmulatorMode
             disp('BpodSystem is in EmulatorMode. No SkippedFeedback WhiteNoise will be played.');
         else
@@ -801,8 +863,10 @@ switch TaskParameters.GUIMeta.SkippedFeedbackFeedback.String{TaskParameters.GUI.
     case 'Beep'
         if isfield(BpodSystem.ModuleUSB, 'HiFi1')
             SkippedFeedbackAction = {'HiFi1', ['P' 5]};
+            SkippedFeedbackAction = [SkippedFeedbackAction, {'WavePlayer1', ['P', OptoTable{SkippedFeedbackCh3Key, SkippedFeedbackCh4Key}]}];
+            
         elseif isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-            SkippedFeedbackAction = {'WavePlayer1', ['P' 5]};
+            SkippedFeedbackAction = [SkippedFeedbackAction, {'WavePlayer1', ['P', Opto1kHzTable{SkippedFeedbackCh3Key, SkippedFeedbackCh4Key}]}];
         elseif BpodSystem.EmulatorMode
             disp('BpodSystem is in EmulatorMode. No SkippedFeedback Beep will be played.');
         else
@@ -810,11 +874,11 @@ switch TaskParameters.GUIMeta.SkippedFeedbackFeedback.String{TaskParameters.GUI.
         end
         
 end
-sma = AddState(sma, 'Name', 'SkippedFeedback',...
-    'Timer', TaskParameters.GUI.SkippedFeedbackTimeOut,...
-    'StateChangeConditions', {'Tup', 'EndSkippedFeedback'},...
-    'OutputActions', SkippedFeedbackAction);
-
+sma = AddState(sma,...
+               'Name', 'SkippedFeedback',...
+               'Timer', TaskParameters.GUI.SkippedFeedbackTimeOut,...
+               'StateChangeConditions', {'Tup', 'EndSkippedFeedback'},...
+               'OutputActions', SkippedFeedbackAction);
 
 %% EndSkippedFeedback
 % dummy state for SkippedFeedbackCh3End/Ch4End
@@ -823,10 +887,26 @@ SkippedFeedback CANNOT followed by ITI or it SkippedFeedbackCh3End/Ch4End will d
 (and thus the EventXCh3End will not be carried over)
 %}
 EndSkippedFeedbackAction = {};
-sma = AddState(sma, 'Name', 'EndSkippedFeedback',...
-    'Timer', 0.1,...
-    'StateChangeConditions', {'Tup', 'ITI'},...
-    'OutputActions', EndSkippedFeedbackAction);
+if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
+    SkippedFeedbackCh3End = TaskParameters.GUIMeta.SkippedFeedbackCh3End.String{TaskParameters.GUI.SkippedFeedbackCh3End};
+    SkippedFeedbackCh3EndKey = SkippedFeedbackCh3End;
+    if strcmpi(SkippedFeedbackCh3End, 'Tonic') && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger && strcmpi(SkippedFeedbackCh3Train, 'Tonic')
+        SkippedFeedbackCh3EndKey = 'None';
+    end
+
+    SkippedFeedbackCh4End = TaskParameters.GUIMeta.SkippedFeedbackCh4End.String{TaskParameters.GUI.SkippedFeedbackCh4End};
+    SkippedFeedbackCh4EndKey = SkippedFeedbackCh4End;
+    if strcmpi(SkippedFeedbackCh4End, 'Tonic') && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger && strcmpi(SkippedFeedbackCh4Train, 'Tonic')
+        SkippedFeedbackCh4EndKey = 'None';
+    end
+
+    EndSkippedFeedbackAction = {'WavePlaye1', ['P', OptoTable{SkippedFeedbackCh3EndKey, SkippedFeedbackCh4EndKey}]};
+end
+sma = AddState(sma,...
+               'Name', 'EndSkippedFeedback',...
+               'Timer', 0,...
+               'StateChangeConditions', {'Tup', 'ITI'},...
+               'OutputActions', EndSkippedFeedbackAction);
 
 %% ITI
 ITITimer = TaskParameters.GUI.ITI;
