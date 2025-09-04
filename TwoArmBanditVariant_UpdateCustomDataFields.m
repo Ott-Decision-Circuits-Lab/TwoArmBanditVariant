@@ -202,12 +202,14 @@ for iChannel = 1:length(Channels)
 
     EndKey = strcat(EndingTriggerType, ChannelName, 'End');
     TrainKey = strcat(EndingTriggerType, ChannelName, 'Train');
-    TonicCarriedForwardKey = strcat(Channel, 'TonicCarriedForward');
+    TonicCarriedForwardKey = strcat(ChannelName, 'TonicCarriedForward');
     TriggerKey = strcat(EndingTriggerType, ChannelName, 'Trigger');
     TonicSuppressedKey = strcat(EndingTriggerType, ChannelName, 'TonicSuppressed');
     
-    if ~strcmpi(TaskParameters.GUIMeta.(EndKey).String{TaskParameters.GUI.(EndKey)}, 'Tonic')...
-       || ~strcmpi(TaskParameters.GUIMeta.(TrainKey).String{TaskParameters.GUI.(TrainKey)}, 'Tonic')
+    if strcmpi(TaskParameters.GUIMeta.(EndKey).String{TaskParameters.GUI.(EndKey)}, 'Stop')
+        TrialData.(TonicCarriedForwardKey)(iTrial) = false;
+    elseif strcmpi(TaskParameters.GUIMeta.(EndKey).String{TaskParameters.GUI.(EndKey)}, 'None')...
+       && ~strcmpi(TaskParameters.GUIMeta.(TrainKey).String{TaskParameters.GUI.(TrainKey)}, 'Tonic')
         TrialData.(TonicCarriedForwardKey)(iTrial) = false;
     elseif strcmpi(TaskParameters.GUIMeta.(TrainKey).String{TaskParameters.GUI.(TrainKey)}, 'Tonic')...
            && ~TrialData.(TriggerKey)(iTrial)...

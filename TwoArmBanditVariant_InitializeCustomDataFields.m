@@ -583,7 +583,12 @@ for iChannel = 1:length(Channels)
                 case 2
                     LastTriggerEndKey = strcat('WaitCIn', ChannelName, 'Train');
                     LastTriggerEnd = TaskParameters.GUIMeta.(LastTriggerEndKey).String{TaskParameters.GUI.(LastTriggerEndKey)};
-                    Condition = strcmpi(LastTriggerEnd, 'Tonic');
+                    
+                    LastTriggerKey = strcat('WaitCIn', ChannelName, 'Trigger');
+                    LastTonicSuppressedKey = strcat('WaitCIn', ChannelName, 'TonicSuppressed');
+                    Condition = TrialData.(LastTonicSuppressedKey)(iTrial)...
+                                || strcmpi(LastTriggerEnd, 'Tonic')...
+                                && TrialData.(LastTriggerKey)(iTrial);
 
                 case 3
                     LastTriggerEndKey = strcat('CIn', ChannelName, 'End');
@@ -593,18 +598,29 @@ for iChannel = 1:length(Channels)
                 case 4
                     LastTriggerEndKey = strcat('SIn', ChannelName, 'Train');
                     LastTriggerEnd = TaskParameters.GUIMeta.(LastTriggerEndKey).String{TaskParameters.GUI.(LastTriggerEndKey)};
-                    Condition = strcmpi(LastTriggerEnd, 'Tonic');
+                    
+                    LastTriggerKey = strcat('SIn', ChannelName, 'Trigger');
+                    LastTonicSuppressedKey = strcat('SIn', ChannelName, 'TonicSuppressed');
+                    Condition = TrialData.(LastTonicSuppressedKey)(iTrial)...
+                                || strcmpi(LastTriggerEnd, 'Tonic')...
+                                && TrialData.(LastTriggerKey)(iTrial);
 
                 case 5
                     LastTriggerEndKey = strcat('SIn', ChannelName, 'Train');
                     LastTriggerEnd = TaskParameters.GUIMeta.(LastTriggerEndKey).String{TaskParameters.GUI.(LastTriggerEndKey)};
-                    Condition = strcmpi(LastTriggerEnd, 'Tonic');
+                    
+                    LastTriggerKey = strcat('SIn', ChannelName, 'Trigger');
+                    LastTonicSuppressedKey = strcat('SIn', ChannelName, 'TonicSuppressed');
+                    Condition = TrialData.(LastTonicSuppressedKey)(iTrial)...
+                                || strcmpi(LastTriggerEnd, 'Tonic')...
+                                && TrialData.(LastTriggerKey)(iTrial);
                     
             end
             if strcmpi(TrainType, 'Tonic')...
+               && TrialData.(TriggerKey)(iTrial)...
                && ~TaskParameters.GUI.(RepeatedTonicTriggerKey)...
                && Condition
-                TrialData.(TriggerKe)(iTrial) = false;
+                TrialData.(TriggerKey)(iTrial) = false;
                 TrialData.(TonicSuppressedKey)(iTrial) = true;
             end
             
