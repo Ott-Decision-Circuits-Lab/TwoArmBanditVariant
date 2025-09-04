@@ -331,7 +331,7 @@ switch Mode
                 end
         end
 
-    case 'Opto'
+    case 'OptoTrialIndependent'
         %% Ch3
         if TaskParameters.GUI.Ch3Looped == 1
             Player.LoopDuration(3) = 20000; % 1hr = 3600s; 20000 > 5hr
@@ -429,10 +429,10 @@ switch Mode
         %% opto + sound
         % opto-white noise
         % usually when opto (final setting), no white noise is used in
-        % BrokeFixation, EarlyWithdrawl, IncorrectChoice. Even if so, 0.5s
+        % BrokeFixation, EarlyWithdrawl, IncorrectChoice. Even if so, 3s
         % is enough to signal error (e.g. Cued + Early Withdrawl)
         SoundIndex = 15;
-        OptoWhiteNoise = rand(1, fs * 0.5) * 2 - 1;
+        OptoWhiteNoise = rand(1, fs * 3) * 2 - 1;
 
         if ~isempty(OptoWhiteNoise)
             if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
@@ -491,5 +491,50 @@ switch Mode
         Player.TriggerProfiles(42:56, 3) = x(2:end);
         Player.TriggerProfiles(42:56, 4) = y(2:end);
         
+    case 'OptoTrialDependent'
+        %% Ch3
+        % tonic
+        SoundIndex = 11;
+        TonicTrain = [];
+        
+        Voltage = TaskParameters.GUI.Ch3TonicVoltage;
+        PulseNumber = TaskParameters.GUI.Ch3TonicPulseNumber;
+        TrainFreq = TaskParameters.GUI.Ch3TonicTrainFreq;
+        PulseWidth = TaskParameters.GUI.Ch3TonicPulseWidth;
+        if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
+            if TaskParameters.GUI.Ch3TonicPoisson
+                TonicTrain = Voltage * GeneratePoissonClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+                BpodSystem.Data.Custom.TrialData.Ch3TonicTrain{iTrial} = TonicTrain;
+            end
+        end
+
+        if ~isempty(TonicTrain)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, TonicTrain);
+            end
+        end
+
+        %% Ch4
+        % tonic
+        SoundIndex = 13;
+        TonicTrain = [];
+        
+        Voltage = TaskParameters.GUI.Ch4TonicVoltage;
+        PulseNumber = TaskParameters.GUI.Ch4TonicPulseNumber;
+        TrainFreq = TaskParameters.GUI.Ch4TonicTrainFreq;
+        PulseWidth = TaskParameters.GUI.Ch4TonicPulseWidth;
+        if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
+            if TaskParameters.GUI.Ch4TonicPoisson
+                TonicTrain = Voltage * GeneratePoissonClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
+                BpodSystem.Data.Custom.TrialData.Ch4TonicTrain{iTrial} = TonicTrain;
+            end
+        end
+
+        if ~isempty(TonicTrain)
+            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+                Player.loadWaveform(SoundIndex, TonicTrain);
+            end
+        end
+
 end % switch
 end % function

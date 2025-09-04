@@ -573,8 +573,9 @@ if TaskParameters.GUI.WaitCInCh3Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.WaitCInCh3Trigger(iTrial) = true;
             end
 
@@ -598,8 +599,9 @@ if TaskParameters.GUI.CInCh3Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.CInCh3Trigger(iTrial) = true;
             end
 
@@ -623,8 +625,9 @@ if TaskParameters.GUI.SInCh3Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.SInCh3Trigger(iTrial) = true;
             end
 
@@ -648,8 +651,9 @@ if TaskParameters.GUI.WaterSCh3Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.WaterSCh3Trigger(iTrial) = true;
             end
 
@@ -673,8 +677,9 @@ if TaskParameters.GUI.SkippedFeedbackCh3Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.SkippedFeedbackCh3Trigger(iTrial) = true;
             end
 
@@ -770,8 +775,9 @@ if TaskParameters.GUI.WaitCInCh4Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.WaitCInCh4Trigger(iTrial) = true;
             end
 
@@ -795,8 +801,9 @@ if TaskParameters.GUI.CInCh4Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.CInCh4Trigger(iTrial) = true;
             end
 
@@ -820,8 +827,9 @@ if TaskParameters.GUI.SInCh4Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.SInCh4Trigger(iTrial) = true;
             end
 
@@ -845,8 +853,9 @@ if TaskParameters.GUI.WaterSCh4Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.WaterSCh4Trigger(iTrial) = true;
             end
 
@@ -870,8 +879,9 @@ if TaskParameters.GUI.SkippedFeedbackCh4Percentage > (rand * 100)
             BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
             BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
 
-            if TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey)... % 80th (as 1st block) + 10 = 89
-               || iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey) % 90th >= 100(1st trial after block) + (-10)
+            if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
+               | (TrialData.BlockNumber(iTrial) > 1)...
+               & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                 TrialData.SkippedFeedbackCh4Trigger(iTrial) = true;
             end
 
