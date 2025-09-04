@@ -183,60 +183,38 @@ if TrialData.Rewarded(iTrial) == true
     TrialData.DrinkingTime(iTrial) = DrinkingEnd - DrinkingBegin;
 end
 
+%% opto carry forward
 if TrialData.SkippedFeedback(iTrial) == true
-    if strcmpi(TaskParameters.GUIMeta.SkippedFeedbackCh3End.String{TaskParameters.GUI.SkippedFeedbackCh3End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String{TaskParameters.GUI.SkippedFeedbackCh3Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.SkippedFeedbackCh3End.String{TaskParameters.GUI.SkippedFeedbackCh3End}, 'None')
-        TrialData.Ch3TonicCarriedForward(iTrial) = true;
-    end
-    if strcmpi(TaskParameters.GUIMeta.SkippedFeedbackCh4End.String{TaskParameters.GUI.SkippedFeedbackCh4End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String{TaskParameters.GUI.SkippedFeedbackCh4Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.SkippedFeedbackCh4End.String{TaskParameters.GUI.SkippedFeedbackCh4End}, 'None')
-        TrialData.Ch4TonicCarriedForward(iTrial) = true;
-    end
+    EndingTriggerType = 'SkippedFeedback';
 elseif TrialData.Rewarded(iTrial) == true
-    if strcmpi(TaskParameters.GUIMeta.WaterSCh3End.String{TaskParameters.GUI.WaterSCh3End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.WaterSCh3Train.String{TaskParameters.GUI.WaterSCh3Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.WaterSCh3End.String{TaskParameters.GUI.WaterSCh3End}, 'None')
-        TrialData.Ch3TonicCarriedForward(iTrial) = true;
-    end
-    if strcmpi(TaskParameters.GUIMeta.WaterSCh4End.String{TaskParameters.GUI.WaterSCh4End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.WaterSCh4Train.String{TaskParameters.GUI.WaterSCh4Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.WaterSCh4End.String{TaskParameters.GUI.WaterSCh4End}, 'None')
-        TrialData.Ch4TonicCarriedForward(iTrial) = true;
-    end
+    EndingTriggerType = 'WaterS';
 elseif ~isnan(TrialData.ChoiceLeft(iTrial))
-    if strcmpi(TaskParameters.GUIMeta.SInCh3End.String{TaskParameters.GUI.SInCh3End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.SInCh3Train.String{TaskParameters.GUI.SInCh3Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.SInCh3End.String{TaskParameters.GUI.SInCh3End}, 'None')
-        TrialData.Ch3TonicCarriedForward(iTrial) = true;
-    end
-    if strcmpi(TaskParameters.GUIMeta.SInCh4End.String{TaskParameters.GUI.SInCh4End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.SInCh4Train.String{TaskParameters.GUI.SInCh4Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.SInCh4End.String{TaskParameters.GUI.SInCh4End}, 'None')
-        TrialData.Ch4TonicCarriedForward(iTrial) = true;
-    end
+    EndingTriggerType = 'SIn';
 elseif ~TrialData.NoTrialStart(iTrial) % so it can't be first BF then NTS
-    if strcmpi(TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.CInCh3Train.String{TaskParameters.GUI.CInCh3Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End}, 'None')
-        TrialData.Ch3TonicCarriedForward(iTrial) = true;
-    end
-    if strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.CInCh4Train.String{TaskParameters.GUI.CInCh4Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End}, 'None')
-        TrialData.Ch4TonicCarriedForward(iTrial) = true;
-    end
+    EndingTriggerType = 'CIn';
 else
-    if strcmpi(TaskParameters.GUIMeta.WaitCInCh3End.String{TaskParameters.GUI.WaitCInCh3End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.WaitCInCh3Train.String{TaskParameters.GUI.WaitCInCh3Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.WaitCInCh3End.String{TaskParameters.GUI.WaitCInCh3End}, 'None')
-        TrialData.Ch3TonicCarriedForward(iTrial) = true;
-    end
-    if strcmpi(TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End}, 'Tonic')...
-       || strcmpi(TaskParameters.GUIMeta.WaitCInCh4Train.String{TaskParameters.GUI.WaitCInCh4Train}, 'Tonic')...
-       && strcmpi(TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End}, 'None')
-        TrialData.Ch4TonicCarriedForward(iTrial) = true;
+    EndingTriggerType = 'WaitCIn';
+end
+
+Channels = {'Ch3', 'Ch4'};
+for iChannel = 1:length(Channels)
+    ChannelName = Channels{iChannel};
+
+    EndKey = strcat(EndingTriggerType, ChannelName, 'End');
+    TrainKey = strcat(EndingTriggerType, ChannelName, 'Train');
+    TonicCarriedForwardKey = strcat(Channel, 'TonicCarriedForward');
+    TriggerKey = strcat(EndingTriggerType, ChannelName, 'Trigger');
+    TonicSuppressedKey = strcat(EndingTriggerType, ChannelName, 'TonicSuppressed');
+    
+    if ~strcmpi(TaskParameters.GUIMeta.(EndKey).String{TaskParameters.GUI.(EndKey)}, 'Tonic')...
+       || ~strcmpi(TaskParameters.GUIMeta.(TrainKey).String{TaskParameters.GUI.(TrainKey)}, 'Tonic')
+        TrialData.(TonicCarriedForwardKey)(iTrial) = false;
+    elseif strcmpi(TaskParameters.GUIMeta.(TrainKey).String{TaskParameters.GUI.(TrainKey)}, 'Tonic')...
+           && ~TrialData.(TriggerKey)(iTrial)...
+           && ~TrialData.(TonicSuppressedKey)(iTrial)
+        TrialData.(TonicCarriedForwardKey)(iTrial) = false;
+    else
+        TrialData.(TonicCarriedForwardKey)(iTrial) = true;
     end
 end
 
