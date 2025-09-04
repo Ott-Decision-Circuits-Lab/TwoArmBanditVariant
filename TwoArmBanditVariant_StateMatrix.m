@@ -82,14 +82,18 @@ end
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     WaitCInCh3Train = TaskParameters.GUIMeta.WaitCInCh3Train.String{TaskParameters.GUI.WaitCInCh3Train};
     WaitCInCh3Key = WaitCInCh3Train;
-    if ~TrialData.WaitCInCh3Trigger(iTrial)
+    if TrialData.WaitCInCh3TonicSuppressed(iTrial)
         WaitCInCh3Key = 'None';
+    elseif ~TrialData.WaitCInCh3Trigger(iTrial)
+        WaitCInCh3Key = 'Stop';
     end
 
     WaitCInCh4Train = TaskParameters.GUIMeta.WaitCInCh4Train.String{TaskParameters.GUI.WaitCInCh4Train};
     WaitCInCh4Key = WaitCInCh4Train;
-    if ~TrialData.WaitCInCh4Trigger(iTrial)
+    if TrialData.WaitCInCh4TonicSuppressed(iTrial)
         WaitCInCh4Key = 'None';
+    elseif ~TrialData.WaitCInCh4Trigger(iTrial)
+        WaitCInCh4Key = 'Stop';
     end
     
     PreITIAction = [PreITIAction, {'WavePlayer1', ['P', OptoTable{WaitCInCh3Key, WaitCInCh4Key}]}];
@@ -159,14 +163,18 @@ StimulusDelayAction = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     CInCh3Train = TaskParameters.GUIMeta.CInCh3Train.String{TaskParameters.GUI.CInCh3Train};
     CInCh3Key = CInCh3Train;
-    if ~TrialData.CInCh3Trigger(iTrial)
+    if TrialData.CInCh3TonicSuppressed(iTrial)
         CInCh3Key = 'None';
+    elseif ~TrialData.CInCh3Trigger(iTrial)
+        CInCh3Key = 'Stop';
     end
 
     CInCh4Train = TaskParameters.GUIMeta.CInCh4Train.String{TaskParameters.GUI.CInCh4Train};
     CInCh4Key = CInCh4Train;
-    if ~TrialData.CInCh4Trigger(iTrial)
+    if TrialData.CInCh4TonicSuppressed(iTrial)
         CInCh4Key = 'None';
+    elseif ~TrialData.CInCh4Trigger(iTrial)
+        CInCh4Key = 'Stop';
     end
 
     StimulusDelayAction = [StimulusDelayAction, {'WavePlayer1', ['P', OptoTable{CInCh3Key, CInCh4Key}]}];
@@ -480,14 +488,18 @@ SInOpto = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     SInCh3Train = TaskParameters.GUIMeta.SInCh3Train.String{TaskParameters.GUI.SInCh3Train};
     SInCh3Key = SInCh3Train;
-    if ~TrialData.SInCh3Trigger(iTrial)
+    if TrialData.SInCh3TonicSuppressed(iTrial)
         SInCh3Key = 'None';
+    elseif ~TrialData.SInCh3Trigger(iTrial)
+        SInCh3Key = 'Stop';
     end
     
     SInCh4Train = TaskParameters.GUIMeta.SInCh4Train.String{TaskParameters.GUI.SInCh4Train};
     SInCh4Key = SInCh4Train;
-    if ~TrialData.SInCh4Trigger(iTrial)
+    if TrialData.SInCh4TonicSuppressed(iTrial)
         SInCh4Key = 'None';
+    elseif ~TrialData.SInCh4Trigger(iTrial)
+        SInCh4Key = 'Stop';
     end
 
     SInOpto = {'WavePlayer1', ['P', OptoTable{SInCh3Key, SInCh4Key}]};
@@ -698,14 +710,18 @@ WaterSOpto = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     WaterSCh3Train = TaskParameters.GUIMeta.WaterSCh3Train.String{TaskParameters.GUI.WaterSCh3Train};
     WaterSCh3Key = WaterSCh3Train;
-    if ~TrialData.WaterSCh3Trigger(iTrial)
+    if TrialData.WaterSCh3TonicSuppressed(iTrial)
         WaterSCh3Key = 'None';
+    elseif ~TrialData.WaterSCh3Trigger(iTrial)
+        WaterSCh3Key = 'Stop';
     end
 
     WaterSCh4Train = TaskParameters.GUIMeta.WaterSCh4Train.String{TaskParameters.GUI.WaterSCh4Train};
     WaterSCh4Key = WaterSCh4Train;
-    if ~TrialData.WaterSCh4Trigger(iTrial)
+    if TrialData.WaterSCh4TonicSuppressed(iTrial)
         WaterSCh4Key = 'None';
+    elseif ~TrialData.WaterSCh4Trigger(iTrial)
+        WaterSCh4Key = 'Stop';
     end
 
     WaterSOpto = {'WavePlayer1', ['P', OptoTable{WaterSCh3Key, WaterSCh4Key}]};
@@ -786,14 +802,18 @@ SkippedFeedbackAction  = {};
 if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     SkippedFeedbackCh3Train = TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String{TaskParameters.GUI.SkippedFeedbackCh3Train};
     SkippedFeedbackCh3Key = SkippedFeedbackCh3Train;
-    if ~TrialData.SkippedFeedbackCh3Trigger(iTrial)
+    if TrialData.SkippedFeedbackCh3TonicSuppressed(iTrial)
         SkippedFeedbackCh3Key = 'None';
+    elseif ~TrialData.SkippedFeedbackCh3Trigger(iTrial)
+        SkippedFeedbackCh3Key = 'Stop';
     end
 
     SkippedFeedbackCh4Train = TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String{TaskParameters.GUI.SkippedFeedbackCh4Train};
     SkippedFeedbackCh4Key = SkippedFeedbackCh4Train;
-    if ~TrialData.SkippedFeedbackCh4Trigger(iTrial)
+    if TrialData.SkippedFeedbackCh4TonicSuppressed(iTrial)
         SkippedFeedbackCh4Key = 'None';
+    elseif ~TrialData.SkippedFeedbackCh4Trigger(iTrial)
+        SkippedFeedbackCh4Key = 'Stop';
     end
     
 end
