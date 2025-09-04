@@ -86,27 +86,12 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaitCInCh3Key = 'None';
     end
 
-    if strcmpi(WaitCInCh3Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
-       && iTrial ~= 1 &&...
-       TrialData.Ch3TonicCarriedForward(iTrial-1)
-        WaitCInCh3Key = 'None';
-    end
-    
-
     WaitCInCh4Train = TaskParameters.GUIMeta.WaitCInCh4Train.String{TaskParameters.GUI.WaitCInCh4Train};
     WaitCInCh4Key = WaitCInCh4Train;
     if ~TrialData.WaitCInCh4Trigger(iTrial)
         WaitCInCh4Key = 'None';
     end
-
-    if strcmpi(WaitCInCh4Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
-       && (iTrial ~= 1)...
-       && TrialData.Ch4TonicCarriedForward(iTrial-1)
-        WaitCInCh4Key = 'None';
-    end
-
+    
     PreITIAction = [PreITIAction, {'WavePlayer1', ['P', OptoTable{WaitCInCh3Key, WaitCInCh4Key}]}];
 end
 sma = AddState(sma,...
@@ -133,7 +118,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
        && strcmpi(WaitCInCh3Train, 'Tonic')
         WaitCInCh3EndKey = 'None';
     end
-
+    
     WaitCInCh4End = TaskParameters.GUIMeta.WaitCInCh4End.String{TaskParameters.GUI.WaitCInCh4End};
     WaitCInCh4EndKey = WaitCInCh4End;
     if strcmpi(WaitCInCh4End, 'Tonic')...
@@ -141,6 +126,7 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
        && strcmpi(WaitCInCh4Train, 'Tonic')
         WaitCInCh4EndKey = 'None';
     end
+    
     NoTrialStartAction = [NoTrialStartAction, {'WavePlayer1', ['P', OptoTable{WaitCInCh3EndKey, WaitCInCh4EndKey}]}];
 end
 sma = AddState(sma,...
@@ -173,22 +159,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         CInCh3Key = 'None';
     end
 
-    if strcmpi(CInCh3Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
-       && strcmpi(WaitCInCh3Train, 'Tonic')
-        CInCh3Key = 'None';
-    end
-    
-
     CInCh4Train = TaskParameters.GUIMeta.CInCh4Train.String{TaskParameters.GUI.CInCh4Train};
     CInCh4Key = CInCh4Train;
     if ~TrialData.CInCh4Trigger(iTrial)
-        CInCh4Key = 'None';
-    end
-
-    if strcmpi(CInCh4Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
-       && strcmpi(WaitCInCh4Train, 'Tonic')
         CInCh4Key = 'None';
     end
 
@@ -502,23 +475,10 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
     if ~TrialData.SInCh3Trigger(iTrial)
         SInCh3Key = 'None';
     end
-
-    if strcmpi(SInCh3Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
-       && strcmpi(CInCh3End, 'Tonic')
-        SInCh3Key = 'None';
-    end
     
-
     SInCh4Train = TaskParameters.GUIMeta.SInCh4Train.String{TaskParameters.GUI.SInCh4Train};
     SInCh4Key = SInCh4Train;
     if ~TrialData.SInCh4Trigger(iTrial)
-        SInCh4Key = 'None';
-    end
-
-    if strcmpi(SInCh4Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
-       && strcmpi(CInCh4End, 'Tonic')
         SInCh4Key = 'None';
     end
 
@@ -730,22 +690,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         WaterSCh3Key = 'None';
     end
 
-    if strcmpi(WaterSCh3Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
-       && strcmpi(SInCh3End, 'Tonic')
-        WaterSCh3Key = 'None';
-    end
-    
-
     WaterSCh4Train = TaskParameters.GUIMeta.WaterSCh4Train.String{TaskParameters.GUI.WaterSCh4Train};
     WaterSCh4Key = WaterSCh4Train;
     if ~TrialData.WaterSCh4Trigger(iTrial)
-        WaterSCh4Key = 'None';
-    end
-
-    if strcmpi(WaterSCh4Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
-       && strcmpi(SInCh3End, 'Tonic')
         WaterSCh4Key = 'None';
     end
 
@@ -827,22 +774,9 @@ if isfield(BpodSystem.ModuleUSB, 'WavePlayer1') % if also WavePlayer -> opto
         SkippedFeedbackCh3Key = 'None';
     end
 
-    if strcmpi(SkippedFeedbackCh3Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
-       && strcmpi(SInCh3End, 'Tonic')
-        SkippedFeedbackCh3Key = 'None';
-    end
-    
-
     SkippedFeedbackCh4Train = TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String{TaskParameters.GUI.SkippedFeedbackCh4Train};
     SkippedFeedbackCh4Key = SkippedFeedbackCh4Train;
     if ~TrialData.SkippedFeedbackCh4Trigger(iTrial)
-        SkippedFeedbackCh4Key = 'None';
-    end
-
-    if strcmpi(SkippedFeedbackCh4Key, 'Tonic')...
-       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
-       && strcmpi(SInCh3End, 'Tonic')
         SkippedFeedbackCh4Key = 'None';
     end
     

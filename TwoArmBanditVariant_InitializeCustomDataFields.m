@@ -563,15 +563,15 @@ TrialData.SkippedFeedbackCh3Trigger(iTrial) = false;
 TrialData.Ch3TonicCarriedForward(iTrial) = false; % mainly to check if WaitCIn needed reinstate tonic/basically ITICh3Tonic
 
 if TaskParameters.GUI.WaitCInCh3Percentage > (rand * 100)
-    Ch3Key = TaskParameters.GUIMeta.WaitCInCh3Train.String{TaskParameters.GUI.WaitCInCh3Train};
-    BlockKey = strcat('Ch3', Ch3Key, 'Block');
+    WaitCInCh3Train = TaskParameters.GUIMeta.WaitCInCh3Train.String{TaskParameters.GUI.WaitCInCh3Train};
+    BlockKey = strcat('Ch3', WaitCInCh3Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.WaitCInCh3Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch3', WaitCInCh3Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch3', WaitCInCh3Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -580,24 +580,32 @@ if TaskParameters.GUI.WaitCInCh3Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch3', Ch3Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch3', WaitCInCh3Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.WaitCInCh3Tonic(iTrial) = true;
+                TrialData.WaitCInCh3Trigger(iTrial) = true;
             end
 
     end
+
+    if strcmpi(WaitCInCh3Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && iTrial ~= 1 &&...
+       TrialData.Ch3TonicCarriedForward(iTrial-1)
+        TrialData.WaitCInCh3Trigger(iTrial) = false;
+    end
+    
 end
 
 if TaskParameters.GUI.CInCh3Percentage > (rand * 100)
-    Ch3Key = TaskParameters.GUIMeta.CInCh3Train.String{TaskParameters.GUI.CInCh3Train};
-    BlockKey = strcat('Ch3', Ch3Key, 'Block');
+    CInCh3Train = TaskParameters.GUIMeta.CInCh3Train.String{TaskParameters.GUI.CInCh3Train};
+    BlockKey = strcat('Ch3', CInCh3Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.CInCh3Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch3', CInCh3Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch3', CInCh3Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -606,24 +614,31 @@ if TaskParameters.GUI.CInCh3Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch3', Ch3Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch3', CInCh3Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.CInCh3Tonic(iTrial) = true;
+                TrialData.CInCh3Trigger(iTrial) = true;
             end
             
     end
+    
+    if strcmpi(CInCh3Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(WaitCInCh3Train, 'Tonic')
+        TrialData.CInCh3Trigger(iTrial) = false;
+    end
+    
 end
 
 if TaskParameters.GUI.SInCh3Percentage > (rand * 100)
-    Ch3Key = TaskParameters.GUIMeta.SInCh3Train.String{TaskParameters.GUI.SInCh3Train};
-    BlockKey = strcat('Ch3', Ch3Key, 'Block');
+    SInCh3Train = TaskParameters.GUIMeta.SInCh3Train.String{TaskParameters.GUI.SInCh3Train};
+    BlockKey = strcat('Ch3', SInCh3Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.SInCh3Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch3', SInCh3Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch3', SInCh3Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -632,24 +647,32 @@ if TaskParameters.GUI.SInCh3Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch3', Ch3Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch3', SInCh3Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.SInCh3Tonic(iTrial) = true;
+                TrialData.SInCh3Trigger(iTrial) = true;
             end
             
     end
+    
+    CInCh3End = TaskParameters.GUIMeta.CInCh3End.String{TaskParameters.GUI.CInCh3End};
+    if strcmpi(SInCh3Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(CInCh3End, 'Tonic')
+        TrialData.SInCh3Trigger(iTrial) = false;
+    end
+
 end
 
 if TaskParameters.GUI.WaterSCh3Percentage > (rand * 100)
-    Ch3Key = TaskParameters.GUIMeta.WaterSCh3Train.String{TaskParameters.GUI.WaterSCh3Train};
-    BlockKey = strcat('Ch3', Ch3Key, 'Block');
+    WaterSCh3Train = TaskParameters.GUIMeta.WaterSCh3Train.String{TaskParameters.GUI.WaterSCh3Train};
+    BlockKey = strcat('Ch3', WaterSCh3Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.WaterSCh3Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch3', WaterSCh3Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch3', WaterSCh3Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -658,24 +681,31 @@ if TaskParameters.GUI.WaterSCh3Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch3', Ch3Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch3', WaterSCh3Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.WaterSCh3Tonic(iTrial) = true;
+                TrialData.WaterSCh3Trigger(iTrial) = true;
             end
             
     end
+
+    if strcmpi(WaterSCh3Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(SInCh3Train, 'Tonic')
+        TrialData.WaterSCh3Trigger(iTrial) = false;
+    end
+
 end
 
 if TaskParameters.GUI.SkippedFeedbackCh3Percentage > (rand * 100)
-    Ch3Key = TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String{TaskParameters.GUI.SkippedFeedbackCh3Train};
-    BlockKey = strcat('Ch3', Ch3Key, 'Block');
+    SkippedFeedbackCh3Train = TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String{TaskParameters.GUI.SkippedFeedbackCh3Train};
+    BlockKey = strcat('Ch3', SkippedFeedbackCh3Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.SkippedFeedbackCh3Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch3', Ch3Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch3', Ch3Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch3', SkippedFeedbackCh3Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch3', SkippedFeedbackCh3Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -684,12 +714,19 @@ if TaskParameters.GUI.SkippedFeedbackCh3Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch3', Ch3Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch3', SkippedFeedbackCh3Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.SkippedFeedbackCh3Tonic(iTrial) = true;
+                TrialData.SkippedFeedbackCh3Trigger(iTrial) = true;
             end
             
     end
+
+    if strcmpi(SkippedFeedbackCh3Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch3RepeatedTonicTrigger...
+       && strcmpi(SInCh3Train, 'Tonic')
+        TrialData.SkippedFeedbackCh3Trigger(iTrial) = false;
+    end
+    
 end
 
 %% Ch4
@@ -765,15 +802,15 @@ TrialData.SkippedFeedbackCh4Trigger(iTrial) = false;
 TrialData.Ch4TonicCarriedForward(iTrial) = false; % mainly to check if WaitCIn needed reinstate tonic/basically ITICh4Tonic
 
 if TaskParameters.GUI.WaitCInCh4Percentage > (rand * 100)
-    Ch4Key = TaskParameters.GUIMeta.WaitCInCh4Train.String{TaskParameters.GUI.WaitCInCh4Train};
-    BlockKey = strcat('Ch4', Ch4Key, 'Block');
+    WaitCInCh4Train = TaskParameters.GUIMeta.WaitCInCh4Train.String{TaskParameters.GUI.WaitCInCh4Train};
+    BlockKey = strcat('Ch4', WaitCInCh4Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.WaitCInCh4Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch4', WaitCInCh4Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch4', WaitCInCh4Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -782,24 +819,32 @@ if TaskParameters.GUI.WaitCInCh4Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch4', Ch4Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch4', WaitCInCh4Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.WaitCInCh4Tonic(iTrial) = true;
+                TrialData.WaitCInCh4Trigger(iTrial) = true;
             end
 
     end
+
+    if strcmpi(WaitCInCh4Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && (iTrial ~= 1)...
+       && TrialData.Ch4TonicCarriedForward(iTrial-1)
+        TrialData.WaitCInCh4Trigger(iTrial) = false;
+    end
+
 end
 
 if TaskParameters.GUI.CInCh4Percentage > (rand * 100)
-    Ch4Key = TaskParameters.GUIMeta.CInCh4Train.String{TaskParameters.GUI.CInCh4Train};
-    BlockKey = strcat('Ch4', Ch4Key, 'Block');
+    COmCh4Train = TaskParameters.GUIMeta.CInCh4Train.String{TaskParameters.GUI.CInCh4Train};
+    BlockKey = strcat('Ch4', COmCh4Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.CInCh4Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch4', COmCh4Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch4', COmCh4Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -808,24 +853,31 @@ if TaskParameters.GUI.CInCh4Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch4', Ch4Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch4', COmCh4Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.CInCh4Tonic(iTrial) = true;
+                TrialData.CInCh4Trigger(iTrial) = true;
             end
             
     end
+
+    if strcmpi(CInCh4Key, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(WaitCInCh4Train, 'Tonic')
+        TrialData.CInCh4Trigger(iTrial) = false;
+    end
+
 end
 
 if TaskParameters.GUI.SInCh4Percentage > (rand * 100)
-    Ch4Key = TaskParameters.GUIMeta.SInCh4Train.String{TaskParameters.GUI.SInCh4Train};
-    BlockKey = strcat('Ch4', Ch4Key, 'Block');
+    SInCh4Train = TaskParameters.GUIMeta.SInCh4Train.String{TaskParameters.GUI.SInCh4Train};
+    BlockKey = strcat('Ch4', SInCh4Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.SInCh4Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch4', SInCh4Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch4', SInCh4Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -834,24 +886,32 @@ if TaskParameters.GUI.SInCh4Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch4', Ch4Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch4', SInCh4Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.SInCh4Tonic(iTrial) = true;
+                TrialData.SInCh4Trigger(iTrial) = true;
             end
             
     end
+
+    CInCh4End = TaskParameters.GUIMeta.CInCh4End.String{TaskParameters.GUI.CInCh4End};
+    if strcmpi(SInCh4Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(CInCh4End, 'Tonic')
+        TrialData.CInCh4Trigger(iTrial) = false;
+    end
+
 end
 
 if TaskParameters.GUI.WaterSCh4Percentage > (rand * 100)
-    Ch4Key = TaskParameters.GUIMeta.WaterSCh4Train.String{TaskParameters.GUI.WaterSCh4Train};
-    BlockKey = strcat('Ch4', Ch4Key, 'Block');
+    WaterSCh4Train = TaskParameters.GUIMeta.WaterSCh4Train.String{TaskParameters.GUI.WaterSCh4Train};
+    BlockKey = strcat('Ch4', WaterSCh4Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.WaterSCh4Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch4', WaterSCh4Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch4', WaterSCh4Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -860,24 +920,31 @@ if TaskParameters.GUI.WaterSCh4Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch4', Ch4Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch4', WaterSCh4Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.WaterSCh4Tonic(iTrial) = true;
+                TrialData.WaterSCh4Trigger(iTrial) = true;
             end
             
     end
+
+    if strcmpi(WaterSCh4Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(SInCh3Train, 'Tonic')
+        TrialData.WaterSCh4Trigger(iTrial) = false;
+    end
+
 end
 
 if TaskParameters.GUI.SkippedFeedbackCh4Percentage > (rand * 100)
-    Ch4Key = TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String{TaskParameters.GUI.SkippedFeedbackCh4Train};
-    BlockKey = strcat('Ch4', Ch4Key, 'Block');
+    SkippedFeedbackCh4Train = TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String{TaskParameters.GUI.SkippedFeedbackCh4Train};
+    BlockKey = strcat('Ch4', SkippedFeedbackCh4Train, 'Block');
     switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
         case 'NoBlock'
             TrialData.SkippedFeedbackCh4Trigger(iTrial) = true;
 
         case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-            BlockRangeMaxKey = strcat('Ch4', Ch4Key, 'BlockRangeMax');
-            BlockRangeMinKey = strcat('Ch4', Ch4Key, 'BlockRangeMin');
+            BlockRangeMaxKey = strcat('Ch4', SkippedFeedbackCh4Train, 'BlockRangeMax');
+            BlockRangeMinKey = strcat('Ch4', SkippedFeedbackCh4Train, 'BlockRangeMin');
 
             if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                | (TrialData.BlockNumber(iTrial) > 1)...
@@ -886,11 +953,17 @@ if TaskParameters.GUI.SkippedFeedbackCh4Percentage > (rand * 100)
             end
 
         case 'NotToRiskBlock' % always 2nd block
-            BlockTrialNumberKey = strcat('Ch4', Ch4Key, 'BlockTrialNumberKey');
+            BlockTrialNumberKey = strcat('Ch4', SkippedFeedbackCh4Train, 'BlockTrialNumberKey');
             if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
-                TrialData.SkippedFeedbackCh4Tonic(iTrial) = true;
+                TrialData.SkippedFeedbackCh4Trigger(iTrial) = true;
             end
             
+    end
+
+    if strcmpi(SkippedFeedbackCh4Train, 'Tonic')...
+       && ~TaskParameters.GUI.Ch4RepeatedTonicTrigger...
+       && strcmpi(SInCh3Train, 'Tonic')
+        TrialData.SkippedFeedbackCh4Trigger(iTrial) = false;
     end
 end
 
