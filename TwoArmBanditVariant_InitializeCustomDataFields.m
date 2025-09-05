@@ -491,7 +491,7 @@ TrialData.DrinkingTime(iTrial) = NaN;
 
 %% optogenetics stimulation
 Channels = {'Ch3', 'Ch4'};
-BlockTypes = {'Stop', 'Phasic', 'Tonic'};
+BlockTypes = {'Phasic', 'Tonic'};
 TriggerTypes = {'WaitCIn', 'CIn', 'SIn', 'WaterS', 'SkippedFeedback'};
 
 % for iChannel

@@ -287,18 +287,6 @@ if isempty(fieldnames(TaskParameters))
     % AOM Ch3 train <- usually reserved for blue light
     TaskParameters.GUI.Ch3Looped = 0; % need to set AOM master setting <- useful for non-stop tonic stimulation, or any playback > 20s x 50kHz
 	TaskParameters.GUIMeta.Ch3Looped.Style = 'checkbox';
-    
-    TaskParameters.GUI.Ch3StopBlock = 1;
-    TaskParameters.GUIMeta.Ch3StopBlock.Style = 'popupmenu';
-    TaskParameters.GUIMeta.Ch3StopBlock.String = {'NoBlock', 'ToRiskBlock', 'NotToRiskBlock'};
-    TaskParameters.GUI.Ch3StopBlockRangeMin = 0;
-    TaskParameters.GUI.Ch3StopBlockRangeMax = 0;
-    %{
-    NoBlock: ignore BlockRange, only base on trigger percentage
-    ToRiskBlock: Relative to the Block structure of task, -1 = 1st block
-    before block change, +1 = 1st block after block change
-    NotToRiskBlock: separate block structure than the task block
-    %}
 
     TaskParameters.GUI.Ch3RepeatedTonicTrigger = 0; % if a tonic is playing, 0 = no trigger is made upon another tonic
 	TaskParameters.GUIMeta.Ch3RepeatedTonicTrigger.Style = 'checkbox';
@@ -340,8 +328,7 @@ if isempty(fieldnames(TaskParameters))
     NotToRiskBlock: separate block structure than the task block
     %}
 
-    TaskParameters.GUIPanels.AOMCh3Train = {'Ch3Looped', 'Ch3StopBlock', 'Ch3StopBlockRangeMin', 'Ch3StopBlockRangeMax',...
-                                            'Ch3RepeatedTonicTrigger', 'Ch3TonicPoisson',...
+    TaskParameters.GUIPanels.AOMCh3Train = {'Ch3Looped', 'Ch3RepeatedTonicTrigger', 'Ch3TonicPoisson',...
                                             'Ch3TonicVoltage', 'Ch3TonicTrainFreq', 'Ch3TonicPulseNumber', 'Ch3TonicPulseWidth',...
                                             'Ch3TonicBlock', 'Ch3TonicBlockRangeMin', 'Ch3TonicBlockRangeMax',...
                                             'Ch3PhasicVoltage', 'Ch3PhasicTrainFreq', 'Ch3PhasicPulseNumber', 'Ch3PhasicPulseWidth',...
@@ -399,18 +386,6 @@ if isempty(fieldnames(TaskParameters))
     %% AOM Ch4 train <- usually reserved for red light
     TaskParameters.GUI.Ch4Looped = 0; % need to set AOM master setting <- useful for non-stop tonic stimulation, or any playback > 20s x 50kHz
 	TaskParameters.GUIMeta.Ch4Looped.Style = 'checkbox';
-    
-    TaskParameters.GUI.Ch4StopBlock = 1;
-    TaskParameters.GUIMeta.Ch4StopBlock.Style = 'popupmenu';
-    TaskParameters.GUIMeta.Ch4StopBlock.String = {'NoBlock', 'ToRiskBlock', 'NotToRiskBlock'};
-    TaskParameters.GUI.Ch4StopBlockRangeMin = 0;
-    TaskParameters.GUI.Ch4StopBlockRangeMax = 0;
-    %{
-    NoBlock: ignore BlockRange, only base on trigger percentage
-    ToRiskBlock: Relative to the Block structure of task, -1 = 1st block
-    before block change, +1 = 1st block after block change
-    NotToRiskBlock: separate block structure than the task block
-    %}
 
     TaskParameters.GUI.Ch4RepeatedTonicTrigger = 0;
 	TaskParameters.GUIMeta.Ch4RepeatedTonicTrigger.Style = 'checkbox';
@@ -452,8 +427,7 @@ if isempty(fieldnames(TaskParameters))
     NotToRiskBlock: separate block structure than the task block
     %}
 
-    TaskParameters.GUIPanels.AOMCh4Train = {'Ch4Looped', 'Ch4StopBlock', 'Ch4StopBlockRangeMin', 'Ch4StopBlockRangeMax',...
-                                            'Ch4RepeatedTonicTrigger', 'Ch4TonicPoisson',...
+    TaskParameters.GUIPanels.AOMCh4Train = {'Ch4Looped', 'Ch4RepeatedTonicTrigger', 'Ch4TonicPoisson',...
                                             'Ch4TonicVoltage', 'Ch4TonicTrainFreq', 'Ch4TonicPulseNumber', 'Ch4TonicPulseWidth',...
                                             'Ch4TonicBlock', 'Ch4TonicBlockRangeMin', 'Ch4TonicBlockRangeMax',...
                                             'Ch4PhasicVoltage', 'Ch4PhasicTrainFreq', 'Ch4PhasicPulseNumber', 'Ch4PhasicPulseWidth',...
