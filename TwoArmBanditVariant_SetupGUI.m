@@ -338,7 +338,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.WaitCInCh3Percentage = 0; % either play something or 'Stop' <- !!! it is impossible to have constant tonic -> phasic/tonic (based on probability by Percentage)
     TaskParameters.GUI.WaitCInCh3Train = 1; % usually for non-stop continuous tonic stimulation
     TaskParameters.GUIMeta.WaitCInCh3Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.WaitCInCh3Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.WaitCInCh3Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.WaitCInCh3End = 2; % next state ('NoTrialStart') hard stop playback (not for StartCIN will anyway trigger something)
 	TaskParameters.GUIMeta.WaitCInCh3End.Style = 'popupmenu';
     TaskParameters.GUIMeta.WaitCInCh3End.String = {'None', 'Stop', 'Tonic'};
@@ -346,7 +346,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.CInCh3Percentage = 0;
     TaskParameters.GUI.CInCh3Train = 1; % usually for tonic
     TaskParameters.GUIMeta.CInCh3Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.CInCh3Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.CInCh3Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.CInCh3End = 2; % next state ('EW', 'BF', 'ND', or 'WaitSIn') hard stop playback <- always all needs a stop
 	TaskParameters.GUIMeta.CInCh3End.Style = 'popupmenu';
     TaskParameters.GUIMeta.CInCh3End.String = {'None', 'Stop', 'Tonic'};
@@ -354,7 +354,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.SInCh3Percentage = 0;
     TaskParameters.GUI.SInCh3Train = 1;
     TaskParameters.GUIMeta.SInCh3Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.SInCh3Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.SInCh3Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.SInCh3End = 2; % next state ('IncorrectChoice' or 'NotBaited') hard stop playback (not for WaterS nor SkippedFeedback cos they have their own trigger)
 	TaskParameters.GUIMeta.SInCh3End.Style = 'popupmenu';
     TaskParameters.GUIMeta.SInCh3End.String = {'None', 'Stop', 'Tonic'};
@@ -364,7 +364,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIMeta.Ch3RewardReplacement.Style = 'checkbox';
     TaskParameters.GUI.WaterSCh3Train = 1; % usually for phasic
     TaskParameters.GUIMeta.WaterSCh3Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.WaterSCh3Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.WaterSCh3Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.WaterSCh3End = 2; % next state ('Drinking') hard stop playback
 	TaskParameters.GUIMeta.WaterSCh3End.Style = 'popupmenu';
     TaskParameters.GUIMeta.WaterSCh3End.String = {'None', 'Stop', 'Tonic'};
@@ -372,7 +372,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.SkippedFeedbackCh3Percentage = 0;
     TaskParameters.GUI.SkippedFeedbackCh3Train = 1; % usually for phasic
     TaskParameters.GUIMeta.SkippedFeedbackCh3Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.SkippedFeedbackCh3Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.SkippedFeedbackCh3End = 2; % next state ('ITI') hard stop playback <- usually longer than SB-TimeOut
 	TaskParameters.GUIMeta.SkippedFeedbackCh3End.Style = 'popupmenu';
     TaskParameters.GUIMeta.SkippedFeedbackCh3End.String = {'None', 'Stop', 'Tonic'};
@@ -437,7 +437,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.WaitCInCh4Percentage = 0;
     TaskParameters.GUI.WaitCInCh4Train = 1; % usually for non-stop continuous tonic stimulation
     TaskParameters.GUIMeta.WaitCInCh4Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.WaitCInCh4Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.WaitCInCh4Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.WaitCInCh4End = 2; % next state ('NoTrialStart' or 'StartCIn') hard stop playback
 	TaskParameters.GUIMeta.WaitCInCh4End.Style = 'popupmenu';
     TaskParameters.GUIMeta.WaitCInCh4End.String = {'None', 'Stop', 'Tonic'};
@@ -445,7 +445,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.CInCh4Percentage = 0;
     TaskParameters.GUI.CInCh4Train = 1; % usually for tonic
     TaskParameters.GUIMeta.CInCh4Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.CInCh4Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.CInCh4Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.CInCh4End = 2; % next state ('EW', 'BF', 'ND', or 'WaitSIn') hard stop playback <- always all needs a stop
 	TaskParameters.GUIMeta.CInCh4End.Style = 'popupmenu';
     TaskParameters.GUIMeta.CInCh4End.String = {'None', 'Stop', 'Tonic'};
@@ -453,7 +453,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.SInCh4Percentage = 0;
     TaskParameters.GUI.SInCh4Train = 1;
     TaskParameters.GUIMeta.SInCh4Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.SInCh4Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.SInCh4Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.SInCh4End = 2; % next state ('Water', 'IncorrectChoice', 'SkippedFeedback', or 'NotBaited') hard stop playback
 	TaskParameters.GUIMeta.SInCh4End.Style = 'popupmenu';
     TaskParameters.GUIMeta.SInCh4End.String = {'None', 'Stop', 'Tonic'};
@@ -463,7 +463,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUIMeta.Ch4RewardReplacement.Style = 'checkbox';
     TaskParameters.GUI.WaterSCh4Train = 1; % usually for phasic
     TaskParameters.GUIMeta.WaterSCh4Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.WaterSCh4Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.WaterSCh4Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.WaterSCh4End = 2; % next state ('Drinking') hard stop playback
 	TaskParameters.GUIMeta.WaterSCh4End.Style = 'popupmenu';
     TaskParameters.GUIMeta.WaterSCh4End.String = {'None', 'Stop', 'Tonic'};
@@ -471,7 +471,7 @@ if isempty(fieldnames(TaskParameters))
     TaskParameters.GUI.SkippedFeedbackCh4Percentage = 0;
     TaskParameters.GUI.SkippedFeedbackCh4Train = 1; % usually for phasic
     TaskParameters.GUIMeta.SkippedFeedbackCh4Train.Style = 'popupmenu';
-    TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String = {'Tonic', 'Phasic'};
+    TaskParameters.GUIMeta.SkippedFeedbackCh4Train.String = {'Tonic', 'Phasic', 'None'};
     TaskParameters.GUI.SkippedFeedbackCh4End = 2; % next state ('ITI') hard stop playback <- usually longer than SB-TimeOut
 	TaskParameters.GUIMeta.SkippedFeedbackCh4End.Style = 'popupmenu';
     TaskParameters.GUIMeta.SkippedFeedbackCh4End.String = {'None', 'Stop', 'Tonic'};
