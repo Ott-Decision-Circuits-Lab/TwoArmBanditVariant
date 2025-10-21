@@ -569,7 +569,7 @@ for iChannel = 1:length(Channels)
                     end
         
                 case 'NotToRiskBlock' % always 2nd block
-                    BlockTrialNumberKey = strcat(ChannelName, TrainType, 'BlockTrialNumberKey');
+                    BlockTrialNumberKey = strcat(ChannelName, TrainType, 'BlockTrialNumber');
                     if mod(TrialData.(BlockTrialNumberKey)(iTrial), 2) == 0
                         TrialData.(TriggerKey)(iTrial) = true;
                     end
