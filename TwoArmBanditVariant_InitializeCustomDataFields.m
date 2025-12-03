@@ -488,6 +488,31 @@ TrialData.Rewarded(iTrial) = NaN; % true if a non-zero reward is delivered, NaN 
 TrialData.TimeReward(iTrial) = NaN;
 TrialData.TimeNotBaitedFeedback(iTrial) = NaN;
 TrialData.DrinkingTime(iTrial) = NaN;
+switch TaskParameters.GUIMeta.VI.String{TaskParameters.GUI.VI}
+    case 'Fix'
+        TrialData.ITI(iTrial) = TaskParameters.GUI.ITI;
+
+    case 'TruncExp'
+        TrialData.ITI(iTrial) = min([exprnd(TaskParameters.GUI.ITI), TaskParameters.GUI.ITI * 5]); % exp(-5) = 0.0067
+
+    case 'OU'
+        if iTrial == 1
+            TrialData.ITI(iTrial) = TaskParameters.GUI.ITI;
+        else
+            % tau = 120 trial; variance = 0.02;
+            TrialData.ITI(iTrial) = TrialData.ITI(iTrial - 1)...
+                                        + 1 / 120 * (TaskParameters.GUI.ITI - TrialData.ITI(iTrial - 1))...
+                                        + 0.02 * randn();
+        end
+end
+
+switch TaskParameters.GUIMeta.RiskType.String{TaskParameters.GUI.RiskType} % overwrite VI
+    case 'CuedBlockITI'
+        if mod(TrialData.BlockNumber(iTrial), 2) == 0 % longer ITI
+            ITITimer = TaskParameters.GUI.ITI * 1.5;
+        end
+end
+
 %%
 BpodSystem.Data.Custom.TrialData = TrialData;
 

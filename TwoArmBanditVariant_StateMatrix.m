@@ -498,16 +498,7 @@ sma = AddState(sma, 'Name', 'DrinkingGrace',... % serve as time buffer before ne
                               'Tup', 'ITI'},...
     'OutputActions', {});
 
-ITITimer = TaskParameters.GUI.ITI;
-if TaskParameters.GUI.VI
-    ITITimer = min([exprnd(TaskParameters.GUI.ITI), TaskParameters.GUI.ITI * 5]); % exp(-5) = 0.0067
-end
-switch TaskParameters.GUIMeta.RiskType.String{TaskParameters.GUI.RiskType}
-    case 'CuedBlockITI'
-        if mod(TrialData.BlockNumber(iTrial), 2) == 0 % longer ITI
-            ITITimer = TaskParameters.GUI.ITI * 1.5;
-        end
-end
+ITITimer = TrialData.ITI(iTrial);
 sma = AddState(sma, 'Name', 'ITI',...
     'Timer', ITITimer,...
     'StateChangeConditions',{'Tup', 'exit'},...

@@ -43,8 +43,9 @@ if isempty(fieldnames(TaskParameters))
     %{it may need an extra GracePeriod for the decision of starting a new task}
     
     TaskParameters.GUI.ITI = 3; % end of trial ITI
-    TaskParameters.GUI.VI = false; % exprnd based on ITI
-    TaskParameters.GUIMeta.VI.Style = 'checkbox';
+    TaskParameters.GUI.VI = 1; % exprnd based on ITI
+    TaskParameters.GUIMeta.VI.Style = 'popupmenu';
+    TaskParameters.GUIMeta.VI.String = {'Fix', 'TruncExp', 'OU'};
     
     TaskParameters.GUIPanels.General = {'SessionDescription', 'Ports_LMR', 'EphysSession',...
                                         'Wire1VideoTrigger',...
