@@ -502,7 +502,7 @@ switch TaskParameters.GUIMeta.VI.String{TaskParameters.GUI.VI}
             % tau = 120 trial; variance = 0.02;
             TrialData.ITI(iTrial) = TrialData.ITI(iTrial - 1)...
                                         + 1 / 120 * (TaskParameters.GUI.ITI - TrialData.ITI(iTrial - 1))...
-                                        + 0.02 * randn();
+                                        + 0.2 * randn();
         end
 end
 
