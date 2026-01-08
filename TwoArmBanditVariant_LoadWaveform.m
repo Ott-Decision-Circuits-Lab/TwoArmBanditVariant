@@ -355,10 +355,12 @@ switch Mode
             end
         end
 
-        if ~isempty(TonicTrain)
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                Player.loadWaveform(SoundIndex, TonicTrain);
-            end
+        if isempty(TonicTrain)
+            TonicTrain = 0; % somehow if an empty waveform is player, laser sees it as triggered non-stop
+        end
+        
+        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            Player.loadWaveform(SoundIndex, TonicTrain);
         end
         
         % phasic
@@ -372,11 +374,13 @@ switch Mode
         if all([Voltage, PulseNumber, TrainFreq, PulseWidth] > 0)
             PhasicTrain = Voltage * GenerateRegularClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
         end
+        
+        if isempty(PhasicTrain)
+            PhasicTrain = 0; 
+        end
 
-        if ~isempty(PhasicTrain)
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                Player.loadWaveform(SoundIndex, PhasicTrain);
-            end
+        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            Player.loadWaveform(SoundIndex, PhasicTrain);
         end
 
         %% Ch4
@@ -402,10 +406,12 @@ switch Mode
             end
         end
 
-        if ~isempty(TonicTrain)
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                Player.loadWaveform(SoundIndex, TonicTrain);
-            end
+        if isempty(TonicTrain)
+            TonicTrain = 0; % somehow if an empty waveform is player, laser sees it as triggered non-stop
+        end
+
+        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            Player.loadWaveform(SoundIndex, TonicTrain);
         end
         
         % phasic
@@ -420,10 +426,12 @@ switch Mode
             PhasicTrain = Voltage * GenerateRegularClickTrain(TrainFreq, PulseNumber ./ TrainFreq, fs, PulseWidth * fs);
         end
 
-        if ~isempty(PhasicTrain)
-            if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
-                Player.loadWaveform(SoundIndex, PhasicTrain);
-            end
+        if isempty(PhasicTrain)
+            PhasicTrain = 0; % somehow if an empty waveform is player, laser sees it as triggered non-stop
+        end
+
+        if isfield(BpodSystem.ModuleUSB, 'WavePlayer1')
+            Player.loadWaveform(SoundIndex, PhasicTrain);
         end
         
         %% opto + sound
