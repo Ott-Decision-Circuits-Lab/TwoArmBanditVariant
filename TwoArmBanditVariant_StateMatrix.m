@@ -531,7 +531,7 @@ But it is cleaner to do it in the next state
 %}
 sma = SetGlobalTimer(sma, 3, FeedbackDelayLeft); % used to track side poke grace period
 
-LInStateChange = 'WaterL';
+LInStateChange = 'StartWaterL';
 if TrialData.Baited(1, iTrial) == false
     LInStateChange = 'NotBaited';
 end
@@ -571,7 +571,7 @@ sma = AddState(sma,...
 %% StartRIn
 sma = SetGlobalTimer(sma, 4, FeedbackDelayRight); % used to track side poke grace period
 
-RInStateChange = 'WaterR';
+RInStateChange = 'StartWaterR';
 if TrialData.Baited(2, iTrial) == false
     RInStateChange = 'NotBaited';
 end
@@ -608,7 +608,7 @@ sma = AddState(sma,...
                                          LeftPortIn, 'SkippedFeedback'},...
                'OutputActions', {RightLight, RightLightValue});
 
-%% SInOptoEnd (for IncorrectChoice and NotBaited)
+%% SInOptoEnd (for IncorrectChoice and NotBaited and StartWaterR)
 SInEndOpto = {};
 SInEndOptoWhiteNoise = {};
 SInEndOpto500Hz = {};
@@ -704,6 +704,22 @@ sma = AddState(sma,...
                'Timer', TaskParameters.GUI.NotBaitedTimeOut,...
                'StateChangeConditions', {'Tup', 'ITI'},...
                'OutputActions', NotBaitedAction);
+
+%% StartWaterL <- dummy state for opto
+StartWaterLAction = SInEndOpto;
+sma = AddState(sma,...
+               'Name', 'StartWaterL',...
+               'Timer', 0,...
+               'StateChangeConditions', {'Tup', 'WaterL'},...
+               'OutputActions', StartWaterLAction);
+
+%% StartWaterR <- dummy state for opto
+StartWaterRAction = SInEndOpto;
+sma = AddState(sma,...
+               'Name', 'StartWaterR',...
+               'Timer', 0,...
+               'StateChangeConditions', {'Tup', 'WaterR'},...
+               'OutputActions', StartWaterRAction);
 
 %% WaterSOpto
 WaterSOpto = {};

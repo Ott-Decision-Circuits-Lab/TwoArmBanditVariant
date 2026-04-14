@@ -71,7 +71,7 @@ while RunSession
     end
 
     %% set up state matrix and send to bpod
-    sma = TwoArmBanditVariant_StateMatrix(iTrial);
+    sma = TwoArmBanditVariant_StateMatrix(iTrial);    
     SendStateMatrix(sma);
     
     %% NIDAQ get nidaq ready to start
