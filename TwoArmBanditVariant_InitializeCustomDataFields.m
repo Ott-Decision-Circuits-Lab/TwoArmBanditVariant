@@ -553,23 +553,23 @@ for iChannel = 1:length(Channels)
         
         if TaskParameters.GUI.(PercentageKey) > (rand * 100)
             TrainType = TaskParameters.GUIMeta.(TrainKey).String{TaskParameters.GUI.(TrainKey)};
-            BlockKey = strcat(ChannelName, TrainType, 'Block');
+            BlockKey = strcat(ChannelName, BlockType, 'Block');
             switch TaskParameters.GUIMeta.(BlockKey).String{TaskParameters.GUI.(BlockKey)}
                 case 'NoBlock'
                     TrialData.(TriggerKey)(iTrial) = true;
         
                 case 'ToRiskBlock' % always calculate, maybe for future need to sample block transition based on rand
-                    BlockRangeMaxKey = strcat(ChannelName, TrainType, 'BlockRangeMax');
-                    BlockRangeMinKey = strcat(ChannelName, TrainType, 'BlockRangeMin');
+                    BlockRangeMaxKey = strcat(ChannelName, BlockType, 'BlockRangeMax');
+                    BlockRangeMinKey = strcat(ChannelName, BlockType, 'BlockRangeMin');
         
                     if iTrial >= TaskParameters.GUI.NextBlockTrialNumber + TaskParameters.GUI.(BlockRangeMinKey)... % 90th >= 100(1st trial after block) + (-10)
                        | (TrialData.BlockNumber(iTrial) > 1)...
-                       & TrialData.BlockTrialNumber(iTrial) < TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
+                       & TrialData.BlockTrialNumber(iTrial) <= TaskParameters.GUI.(BlockRangeMaxKey) % 80th (as 1st block) + 10 = 89
                         TrialData.(TriggerKey)(iTrial) = true;
                     end
         
                 case 'NotToRiskBlock' % always 2nd block
-                    BlockNumberKey = strcat(ChannelName, TrainType, 'BlockNumber');
+                    BlockNumberKey = strcat(ChannelName, BlockType, 'BlockNumber');
                     if mod(TrialData.(BlockNumberKey)(iTrial), 2) == 0
                         TrialData.(TriggerKey)(iTrial) = true;
                     end
